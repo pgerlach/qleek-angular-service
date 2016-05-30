@@ -1,0 +1,5 @@
+To launch test, cd in this directory, and launch it with
+
+$ python -m SimpleHTTPServer 5000
+
+You need to have a local qleek-backend server running on port 5001.

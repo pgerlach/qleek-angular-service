@@ -1,0 +1,18 @@
+<html>
+<head>
+  <title>Qleek API angular service demo</title>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+  <script type="text/javascript" src="/angularQleekApiService.js"></script> <!-- the qleek api service -->
+  <script type="text/javascript" src="/app.js"></script>
+</head>
+<body ng-app="qleekApiSample" >
+  <p>{{"Hello" + " " + "world"}}</p>
+  <div ng-controller="userController as ctrl">
+   <input type="text" placeholder="your email" ng-model="ctrl.inputEmail"></input>
+   <input type="password" placeholder="your password" ng-model="ctrl.inputPassword"></input>
+    <p>{{ctrl.userName}}</p>
+    <p ng-show="ctrl.errorMessage != null">Error: {{ctrl.errorMessage}}</p>
+    <input value="LOGIN" type="button" ng-click="ctrl.click()"></input>
+  </div>
+</body>
+</html>

@@ -1,0 +1,23 @@
+{
+  "name": "qleek-angular-service",
+  "version": "1.0.0",
+  "description": "Qleek Angular service",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/pgerlach/qleek-angular-service.git"
+  },
+  "keywords": [
+    "qleek",
+    "angular"
+  ],
+  "author": "Pierre-Rudolf Gerlach <pierre@qleek.me>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pgerlach/qleek-angular-service/issues"
+  },
+  "homepage": "https://github.com/pgerlach/qleek-angular-service#readme"
+}
