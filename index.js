@@ -12,7 +12,7 @@
 
     self.sessionToken = null;
 
-    self.isLoggedIn = function() { return self.sessionToken != null; };
+    self.isLoggedIn = function() { return self.getToken() != null; };
 
     var api = function(method, endpoint, data, options) {
       var deferred = $q.defer();
@@ -22,7 +22,7 @@
       var headers = options.headers || {};
       if (! options.noAuth) {
         // TODO check that we have a sessionToken
-        headers.Authorization = self.sessionToken;
+        headers.Authorization = self.getToken();
       }
 
       console.log("headers:", headers);
@@ -63,8 +63,8 @@
       apiPost("login", {email: email, password: password}, {noAuth: true})
       .then(
         function success(data) {
-          self.sessionToken = data.token;
-          console.log("login success, token:", self.sessionToken);
+          self.setToken(data.token);
+          console.log("login success, token:", self.setToken(data.token));
           deferred.resolve();
         },
         function failure(reason) {
@@ -76,6 +76,18 @@
       return deferred.promise;
     };
 
+    self.setToken =  function(sessionToken){
+        localStorage.setItem("token", sessionToken);
+    };
+
+    self.getToken = function(){
+      return localStorage.getItem("token");
+    };
+
+    self.removeToken = function(){
+      localStorage.removeItem("token");
+    };
+
     self.logout = function(email, password) {
       var deferred = $q.defer();
 
@@ -83,7 +95,7 @@
       .then(
         function success(data) {
           // TODO check if "success: true" ?
-          self.sessionToken = null;
+          self.removeToken();
           deferred.resolve();
         },
         function failure(reason) {
