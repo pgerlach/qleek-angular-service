@@ -53,6 +53,10 @@
       return api('POST', endpoint, data, options);
     }
 
+    var apiPut = function(endpoint, data, options) {
+      return api('PUT', endpoint, data, options);
+    }
+
     self.login = function(email, password) {
       var deferred = $q.defer();
 
@@ -97,6 +101,20 @@
     self.getUserInfo = function() {
       return apiGet("user/me");
     }
+
+    self.getUserLibrary = function() {
+      return apiGet("user/me/library");
+    }
+
+    self.getQleek = function(qleekId) {
+      // TODO add populate options as a parameter
+      return apiGet("qleek/" + qleekId + "?__populate=content,cover.imgThumb");
+    }
+
+    self.updateContent = function(contentId, updateData) {
+      return apiPut("content/" + contentId, updateData);
+    }
+
   });
 
 } (window, angular));
