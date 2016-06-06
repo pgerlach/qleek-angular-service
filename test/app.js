@@ -1,5 +1,10 @@
 var app = angular.module('qleekApiSample', ['qleek']);
 
+app.config(function(qleekApiProvider) {
+  console.log("config");
+  qleekApiProvider.setURL("http://localhost:5001/api/v1/");
+});
+
 app.controller('userController', [ 'qleekApi', function($qleekApi) {
   var self = this;
 
