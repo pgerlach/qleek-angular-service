@@ -3,30 +3,23 @@
 
   angular
     .module('qleek', [])
-    .provider('qleekApi', function qleekApiProvider($q, $http) {
+    .provider('qleekApi', function qleekApiProvider() {
 
-    var self = this;
-    // TODO make this configurable
+    // base url, settable by calling setURL
+    var API_BASE_URL = null; // "http://localhost:5001/api/v1/";
 
-    var API_BASE_URL;
+    this.setURL = function (url) {
+      console.log("BASE URL SET TO", url);
+      API_BASE_URL = url;
+    };
 
-      self.$get = ['ApiUrl', function qleekApiFactory(ApiUrl){
-    return {
-      setURL: function (URL) {
-        API_BASE_URL = URL;
-      },
-      $get: function () {
-        return {
-          apiEndpoint: API_BASE_URL
-        }
-      },
+    // actual provider interface
+    this.$get = function qleekApiFactory($q, $http) {
 
+      var self = this;
 
-      isLoggedIn: function () {
-        return self.getToken() != null;
-      },
-
-      api: function (method, endpoint, data, options) {
+      // internal functions
+      var api = function (method, endpoint, data, options) {
         var deferred = $q.defer();
 
         if (!options) {
@@ -36,7 +29,7 @@
         var headers = options.headers || {};
         if (!options.noAuth) {
           // TODO check that we have a sessionToken
-          headers.Authorization = self.getToken();
+          headers.Authorization = getToken();
         }
 
         console.log("headers:", headers);
@@ -57,90 +50,103 @@
             );
 
         return deferred.promise;
-      },
+      };
 
-      apiGet: function (endpoint, options) {
+      var apiGet = function (endpoint, options) {
         return api('GET', endpoint, null, options);
-      },
+      };
 
-      apiPost: function (endpoint, data, options) {
+      var apiPost = function (endpoint, data, options) {
         return api('POST', endpoint, data, options);
-      },
+      };
 
-      apiPut: function (endpoint, data, options) {
+      var apiPut = function (endpoint, data, options) {
         return api('PUT', endpoint, data, options);
-      },
+      };
 
-      login: function (email, password) {
-        var deferred = $q.defer();
-
-        this.apiPost("login", {email: email, password: password}, {noAuth: true})
-            .then(
-                function success(data) {
-                  self.setToken(data.token);
-                  console.log("login success, token:", self.setToken(data.token));
-                  deferred.resolve();
-                },
-                function failure(reason) {
-                  console.log("login failed");
-                  deferred.reject();
-                }
-            );
-
-        return deferred.promise;
-      },
-
-      setToken: function (sessionToken) {
+      var setToken = function (sessionToken) {
         localStorage.setItem("token", sessionToken);
-      },
+      };
 
-      getToken: function () {
+      var getToken = function () {
         return localStorage.getItem("token");
-      },
+      };
 
-      removeToken: function () {
+      var removeToken = function () {
         localStorage.removeItem("token");
-      },
+      };
 
-      logout: function (email, password) {
-        var deferred = $q.defer();
+      console.log("HERE");
 
-        this.apiPost("logout")
+      return {
+
+        isLoggedIn: function () {
+          console.log("isLoggedIn", getToken() != null);
+          return getToken() != null;
+        },
+
+        setToken: setToken,
+        getToken: getToken,
+        removeToken: removeToken,
+
+        login: function (email, password) {
+          var deferred = $q.defer();
+
+          apiPost("login", {email: email, password: password}, {noAuth: true})
             .then(
-                function success(data) {
-                  // TODO check if "success: true" ?
-                  self.removeToken();
-                  deferred.resolve();
-                },
-                function failure(reason) {
-                  console.log("logout failed");
-                  // FIXME forget session token anyway, although it is still usable ?
-                  self.sessionToken = null;
-                  deferred.reject();
-                }
+              function success(data) {
+                setToken(data.token);
+                console.log("login success, token:", setToken(data.token));
+                deferred.resolve();
+              },
+              function failure(reason) {
+                console.log("login failed");
+                deferred.reject();
+              }
             );
+          return deferred.promise;
+        },
 
-        return deferred.promise;
-      },
+        logout: function (email, password) {
+          var deferred = $q.defer();
 
+          console.log("logout");
 
-      getUserInfo: function () {
-        return this.apiGet("user/me");
-      },
+          apiPost("logout")
+          .then(
+              function success(data) {
+                console.log("logout yay");
+                // TODO check if "success: true" ?
+                removeToken();
+                deferred.resolve();
+              },
+              function failure(reason) {
+                console.log("logout failed");
+                // FIXME forget session token anyway, although it is still usable ?
+                deferred.reject();
+              }
+          );
 
-      getUserLibrary: function () {
-        return this.apiGet("user/me/library");
-      },
+          return deferred.promise;
+        },
 
-      getQleek: function (qleekId) {
-        // TODO add populate options as a parameter
-        return this.apiGet("qleek/" + qleekId + "?__populate=content,cover.imgThumb");
-      },
+        getUserInfo: function () {
+          return apiGet("user/me");
+        },
 
-      updateContent: function (contentId, updateData) {
-        return this.apiPut("content/" + contentId, updateData);
+        getUserLibrary: function () {
+          return apiGet("user/me/library");
+        },
+
+        getQleek: function (qleekId) {
+          // TODO add populate options as a parameter
+          return apiGet("qleek/" + qleekId + "?__populate=content,cover.imgThumb");
+        },
+
+        updateContent: function (contentId, updateData) {
+          return apiPut("content/" + contentId, updateData);
+        }
       }
     }
-  }]
-});
+  });
 } (window, angular));
