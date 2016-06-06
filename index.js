@@ -9,14 +9,12 @@
     var API_BASE_URL = null; // "http://localhost:5001/api/v1/";
 
     this.setURL = function (url) {
-      console.log("BASE URL SET TO", url);
       API_BASE_URL = url;
     };
 
     // actual provider interface
     this.$get = function qleekApiFactory($q, $http) {
 
-      var self = this;
 
       // internal functions
       var api = function (method, endpoint, data, options) {
@@ -32,7 +30,6 @@
           headers.Authorization = getToken();
         }
 
-        console.log("headers:", headers);
 
         $http({
           url: API_BASE_URL + endpoint,
@@ -76,12 +73,10 @@
         localStorage.removeItem("token");
       };
 
-      console.log("HERE");
 
       return {
 
         isLoggedIn: function () {
-          console.log("isLoggedIn", getToken() != null);
           return getToken() != null;
         },
 
@@ -96,7 +91,6 @@
             .then(
               function success(data) {
                 setToken(data.token);
-                console.log("login success, token:", setToken(data.token));
                 deferred.resolve();
               },
               function failure(reason) {
@@ -110,12 +104,9 @@
         logout: function (email, password) {
           var deferred = $q.defer();
 
-          console.log("logout");
-
           apiPost("logout")
           .then(
               function success(data) {
-                console.log("logout yay");
                 // TODO check if "success: true" ?
                 removeToken();
                 deferred.resolve();
