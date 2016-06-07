@@ -125,8 +125,12 @@
           return apiGet("user/me");
         },
 
-        getUserLibrary: function () {
-          return apiGet("user/me/library");
+        getUserLibrary: function (limit, skip) {
+          if(limit || skip ){
+            return apiGet("user/me/library?__populate=cover.imgThumb&limit=" + limit + '&skip=' +skip);
+          } else {
+            return apiGet("user/me/library?__populate=cover.imgThumb");
+          }
         },
 
         getQleek: function (qleekId) {
