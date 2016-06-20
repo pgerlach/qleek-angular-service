@@ -121,6 +121,16 @@
           return deferred.promise;
         },
 
+        checkToken: function(){
+          apiGet('user/me', {
+            Authorization: this.getToken()
+          }).then(function success(response){
+            if(response.statusCode === 403){
+              removeToken();
+            }
+          });
+        },
+
         getUserInfo: function () {
           return apiGet("user/me");
         },
@@ -140,7 +150,12 @@
 
         updateContent: function (contentId, updateData) {
           return apiPut("content/" + contentId, updateData);
+        },
+
+        createContent: function(uri, shuffle, repeat) {
+          return apiGet("content/fromUri?uri=" + uri + '&shuffle=' + shuffle + '&repeat=' + repeat);
         }
+
       }
     }
   });
