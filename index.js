@@ -142,8 +142,8 @@
           return apiPut("content/" + contentId, updateData);
         },
 
-        createContent: function(uri, shuffle, repeat) {
-          return apiGet("content/fromUri?uri=" + uri + '&shuffle=' + shuffle + '&repeat=' + repeat);
+        getContentFromUri: function(uri) {
+          return apiGet("content/fromUri?uri=" + encodeURIComponent(uri));
         }
       }
     }
