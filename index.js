@@ -95,8 +95,7 @@
                 deferred.resolve();
               },
               function failure(reason) {
-                console.log("login failed");
-                deferred.reject();
+                deferred.reject(reason.data.message);
               }
             );
           return deferred.promise;
@@ -108,14 +107,13 @@
           apiPost("logout")
           .then(
               function success(data) {
-                // TODO check if "success: true" ?
                 removeToken();
                 deferred.resolve();
               },
               function failure(reason) {
-                console.log("logout failed");
-                // FIXME forget session token anyway, although it is still usable ?
-                deferred.reject();
+                // forget session token anyway, although it is still usable: the user asked to logout
+                removeToken();
+                deferred.reject(reason.data.message);
               }
           );
 
