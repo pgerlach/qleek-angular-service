@@ -9,7 +9,6 @@
     var API_BASE_URL = null; // "http://localhost:5001/api/v1/";
 
     this.setURL = function (url) {
-      url = url + '/api/v1/';
       API_BASE_URL = url;
     };
 
@@ -126,9 +125,9 @@
 
         getUserLibrary: function (limit, skip) {
           if(limit || skip ){
-            return apiGet("user/me/library?__populate=cover.imgThumb&limit=" + limit + '&skip=' +skip);
+            return apiGet("user/me/library?__populate=content,cover.imgThumb&limit=" + limit + '&skip=' +skip);
           } else {
-            return apiGet("user/me/library?__populate=cover.imgThumb");
+            return apiGet("user/me/library?__populate=content,cover.imgThumb");
           }
         },
 
