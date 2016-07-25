@@ -145,54 +145,31 @@
           return apiGet("content/fromUri?uri=" + encodeURIComponent(uri));
         },
 
-        getStreamableTracks: function (url) {
+        getStreamableTracks: function (uri, kind) {
           var deferred = $q.defer()
           var counter = 0;
           var userid = null;
-          var result = {message: null};
+          var result = {};
+          var type = null;
           $http({
-            url: 'https://api.soundcloud.com/resolve?url=' + url + '&client_id=' + config.SOUNDCLOUD_CLIENT_ID,
+            url: uri + '/tracks?client_id=' + config.SOUNDCLOUD_CLIENT_ID,
             method: 'GET'
           }).then(function success (response) {
-            if(response.data.id && response.data.kind === 'user') {
-              userid = response.data.kind === 'user' ? response.data.id : response.data.user.id;
-              $http({
-                url: 'https://api.soundcloud.com/users/' + userid + '/tracks?client_id=' + config.SOUNDCLOUD_CLIENT_ID,
-                method: 'GET'
-              }).then(function success (response) {
-                for(var i in response.data){
-                  if(response.data[i].streamable){
-                    counter++
-                  }
-                }
-                if(counter < 10){
-                  if(!counter){
-                    result.message = 'This artist has no available tracks on qleek';
-                    result.counter = counter;
-                  } else {
-                    result.message = 'This artist has only ' + counter + ' tracks available on Qleek';
-                    result.counter = counter;
-                  }
-                  deferred.resolve(result);   
-                }
-              });
-            } else if (response.data.kind == 'playlist') {
-              for(var i in response.data.tracks){
-                if(response.data.tracks[i].streamable){
-                  counter++
-                }
+            for(var i in response.data){
+              if(response.data[i].streamable){
+                counter++
               }
-              if(counter < 10){
-                if(!counter){
-                  result.message = 'This playlist has no available tracks on qleek';
-                  result.counter = counter;
-                } else {
-                  result.message = 'This playlist has only ' + counter + ' tracks available on Qleek';
-                  result.counter = counter;
-                }
-                deferred.resolve(result);
+            }
+            type = kind === 'playlist' ? 'playlist' : 'artist';
+            if(counter < 10){
+              if(!counter){
+                result.message = 'This ' + type + ' has no available tracks on qleek';
+                result.counter = counter;
+              } else {
+                result.message = 'This ' + type + ' has only ' + counter + ' tracks available on Qleek';
+                result.counter = counter;
               }
-              
+              deferred.resolve(result);
             }
           });
           return deferred.promise;
