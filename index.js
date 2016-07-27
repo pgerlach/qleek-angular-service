@@ -173,7 +173,42 @@
             }
           });
           return deferred.promise;
+        },
+
+        getCoverFromQleekDesc: function (qleekDescId) {
+          return apiGet('qleekDesc/' + qleekDescId)
+          .then(function (response) {
+            return apiGet('cover/' + response.cover)
+            .then(function (response) {
+              return apiGet('image/' + response.imgOrig).then(function(response) {
+                return response;
+              });
+            })
+          });
+        },
+
+        getOrder: function () {
+          return this.getUserInfo()
+          .then(function success (response) {
+            var userCartId = response.cart;
+            return apiGet('order/' + userCartId + '?__populate=qleeks.desc,qleeks.desc.cover.imgThumb')
+            .then(function success (response) {
+              return response;
+            });
+          })
+        },
+
+        updateOrder: function (data) {
+          return this.getUserInfo()
+          .then(function success (response) {
+            var userCardId = response.cart;
+            return apiPut('order/' + userCardId, data)
+            .then(function success (response) {
+              return response;
+            });
+          });
         }
+
       }
     }
   });
