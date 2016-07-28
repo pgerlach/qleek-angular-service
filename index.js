@@ -201,12 +201,39 @@
         updateOrder: function (data) {
           return this.getUserInfo()
           .then(function success (response) {
-            var userCardId = response.cart;
-            return apiPut('order/' + userCardId, data)
+            var userCartId = response.cart;
+            return apiPut('order/' + userCartId, data)
             .then(function success (response) {
               return response;
             });
           });
+        },
+
+        postCheckout: function (data) {
+          return this.getUserInfo()
+          .then(function success (response) {
+            var userCartId = response.cart;
+            return apiPost('checkout', data)
+            .then(function success (response) {
+              return response;
+            });
+          });
+        },
+
+        getStripeToken: function (data) {
+          var deffered = $q.defer();
+          $http({
+            url: 'https://api.stripe.com/v1/tokens',
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            data: 'key=' + data.key + '&payment_user_agent=' + data.payment_user_agent + '&card[name]=' + data.card.name + 
+            '&card[number]=' + data.card.number + '&card[cvc]=' + data.card.cvc + '&card[exp_month]=' + data.card.exp_month + '&card[exp_year]=' + data.card.exp_year
+          }).then(function success (response) {
+            deffered.resolve(response);
+          })
+          return deffered.promise;
         }
 
       }
