@@ -173,7 +173,22 @@
             }
           });
           return deferred.promise;
+        },
+
+        getPacks: function () {
+          return apiGet('pack')
+          .then(function (response) {
+            return response;
+          });
+        },
+
+        getPack: function (packId) {
+          return apiGet('pack/' + packId)
+          .then(function (response) {
+            return response
+          });
         }
+
       }
     }
   });
