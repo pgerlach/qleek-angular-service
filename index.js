@@ -176,14 +176,14 @@
         },
 
         getPacks: function () {
-          return apiGet('pack')
+          return apiGet('pack?__populate=covers.imgThumb')
           .then(function (response) {
             return response;
           });
         },
 
         getPack: function (packId) {
-          return apiGet('pack/' + packId)
+          return apiGet('pack/' + packId + '?__populate=covers.imgThumb')
           .then(function (response) {
             return response
           });
