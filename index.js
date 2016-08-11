@@ -175,18 +175,6 @@
           return deferred.promise;
         },
 
-        getCoverFromQleekDesc: function (qleekDescId) {
-          return apiGet('qleekDesc/' + qleekDescId)
-          .then(function (response) {
-            return apiGet('cover/' + response.cover)
-            .then(function (response) {
-              return apiGet('image/' + response.imgOrig).then(function(response) {
-                return response;
-              });
-            })
-          });
-        },
-
         getOrder: function () {
           return this.getUserInfo()
           .then(function success (response) {
