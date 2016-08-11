@@ -212,22 +212,6 @@
           });
         },
 
-        getStripeToken: function (data) {
-          var deffered = $q.defer();
-          $http({
-            url: 'https://api.stripe.com/v1/tokens',
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            data: 'key=' + data.key + '&payment_user_agent=' + data.payment_user_agent + '&card[name]=' + data.card.name + 
-            '&card[number]=' + data.card.number + '&card[cvc]=' + data.card.cvc + '&card[exp_month]=' + data.card.exp_month + '&card[exp_year]=' + data.card.exp_year
-          }).then(function success (response) {
-            deffered.resolve(response);
-          })
-          return deffered.promise;
-        },
-
         getPacks: function () {
           return apiGet('pack?__populate=covers.imgThumb');
         },
