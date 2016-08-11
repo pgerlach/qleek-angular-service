@@ -183,6 +183,35 @@
           return deferred.promise;
         },
 
+        getOrder: function () {
+          // FIXME we should remember the cartId so as not to re-query it every time
+          return this.getUserInfo()
+          .then(function success (response) {
+            var userCartId = response.cart;
+            return apiGet('order/' + userCartId + '?__populate=qleeks.desc,qleeks.desc.cover.imgThumb');
+          })
+        },
+
+        updateOrder: function (data) {
+          // FIXME we should remember the cartId so as not to re-query it every time
+          return this.getUserInfo()
+          .then(function success (response) {
+            var userCartId = response.cart;
+            return apiPut('order/' + userCartId, data);
+          });
+        },
+
+        postCheckout: function (data) {
+          return this.getUserInfo()
+          .then(function success (response) {
+            var userCartId = response.cart;
+            return apiPost('checkout', data)
+            .then(function success (response) {
+              return response;
+            });
+          });
+        },
+
         getPacks: function () {
           return apiGet('pack?__populate=covers.imgThumb');
         },
