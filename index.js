@@ -121,7 +121,15 @@
         },
 
         getUserInfo: function () {
-          return apiGet("user/me");
+          var deferred = $q.defer();
+          apiGet("user/me")
+          .then(function success(response) {
+            deferred.resolve(response);
+          }, function failure(reason) {
+            removeToken();
+            deferred.reject(reason);
+          });
+          return deferred.promise;
         },
 
         getUserLibrary: function (limit, skip) {
