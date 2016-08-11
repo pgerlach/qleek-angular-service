@@ -181,7 +181,16 @@
             }
           });
           return deferred.promise;
+        },
+
+        getPacks: function () {
+          return apiGet('pack?__populate=covers.imgThumb');
+        },
+
+        getPack: function (packId) {
+          return apiGet('pack/' + packId + '?__populate=covers.imgThumb');
         }
+
       }
     }
   });
