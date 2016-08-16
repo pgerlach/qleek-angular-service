@@ -212,8 +212,13 @@
           });
         },
 
-        getPacks: function () {
-          return apiGet('pack?__populate=covers.imgThumb');
+        getPacks: function (skip) {
+          if 
+            (skip) {
+            return apiGet('pack?__populate=covers.imgThumb&format=full&skip=' + skip);
+          } else {
+            return apiGet('pack?__populate=covers.imgThumb&format=full');  
+          }
         },
 
         getPack: function (packId) {
