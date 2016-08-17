@@ -225,12 +225,8 @@
         },
 
         getPacks: function (skip) {
-          if 
-            (skip) {
-            return apiGet('pack?__populate=covers.imgThumb&format=full&skip=' + skip);
-          } else {
-            return apiGet('pack?__populate=covers.imgThumb&format=full');  
-          }
+          if (!skip) { skip = 0; }
+          return apiGet('pack?__populate=covers.imgThumb&format=full&skip=' + skip);
         },
 
         getPack: function (packId) {
