@@ -16,7 +16,6 @@
     // actual provider interface
     this.$get = function qleekApiFactory($q, $http) {
 
-
       // internal functions
       var api = function (method, endpoint, data, options) {
         var deferred = $q.defer();
@@ -118,6 +117,19 @@
           );
 
           return deferred.promise;
+        },
+
+        getTemporarySession: function() {
+          return apiPost("session/temporarySession")
+          .then(
+            function success(response) {
+              setToken(response.token);
+              return response;
+            },
+            function failure(reason) {
+              return reason;
+            }
+          );
         },
 
         getUserInfo: function () {
