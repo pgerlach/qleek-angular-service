@@ -141,11 +141,7 @@
         getUserInfo: getUserInfo,
 
         getUserLibrary: function (limit, skip) {
-          if(limit || skip ){
-            return apiGet("user/me/library?__populate=content,cover.imgThumb&limit=" + limit + '&skip=' +skip);
-          } else {
-            return apiGet("user/me/library?__populate=content,cover.imgThumb");
-          }
+          return apiGet("user/me/library?__populate=content,cover.imgThumb" + (limit ? "&limit=" + limit : "") + (skip ? '&skip=' + skip : ""));
         },
 
         getQleek: function (qleekId) {
