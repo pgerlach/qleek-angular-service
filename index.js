@@ -141,7 +141,7 @@
         getUserInfo: getUserInfo,
 
         getUserLibrary: function (limit, skip) {
-          return apiGet("user/me/library?__populate=content,cover.imgThumb" + (limit ? "&limit=" + limit : "") + (skip ? '&skip=' + skip : ""));
+          return apiGet("user/me/library?__populate=content,cover.imgThumb&format=full" + (limit ? "&limit=" + limit : "") + (skip ? '&skip=' + skip : ""));
         },
 
         getQleek: function (qleekId) {
