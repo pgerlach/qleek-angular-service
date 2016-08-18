@@ -30,7 +30,6 @@
           headers.Authorization = getToken();
         }
 
-
         $http({
           url: API_BASE_URL + endpoint,
           method: method,
@@ -73,16 +72,36 @@
         localStorage.removeItem("token");
       };
 
+      var getUserInfo = function () {
+        var token = getToken();
+        if (token) {
+          return apiGet("user/me")
+          .catch(function failure(reason) {
+            removeToken();
+            return getUserInfo();
+          });
+        } else {
+          return getTemporarySession()
+          .then(function success() {
+            return getUserInfo();
+          });
+        }
+      }
+
+      var getTemporarySession = function() {
+        return apiPost("session/temporarySession")
+        .then(
+          function success(response) {
+            setToken(response.token);
+            return response;
+          },
+          function failure(reason) {
+            return reason;
+          }
+        );
+      };
 
       return {
-
-        isLoggedIn: function () {
-          return getToken() != null;
-        },
-
-        setToken: setToken,
-        getToken: getToken,
-        removeToken: removeToken,
 
         login: function (email, password) {
           var deferred = $q.defer();
@@ -91,7 +110,7 @@
             .then(
               function success(data) {
                 setToken(data.token);
-                deferred.resolve();
+                return getUserInfo();
               },
               function failure(reason) {
                 deferred.reject(reason.data.message);
@@ -119,30 +138,7 @@
           return deferred.promise;
         },
 
-        getTemporarySession: function() {
-          return apiPost("session/temporarySession")
-          .then(
-            function success(response) {
-              setToken(response.token);
-              return response;
-            },
-            function failure(reason) {
-              return reason;
-            }
-          );
-        },
-
-        getUserInfo: function () {
-          var deferred = $q.defer();
-          apiGet("user/me")
-          .then(function success(response) {
-            deferred.resolve(response);
-          }, function failure(reason) {
-            removeToken();
-            deferred.reject(reason);
-          });
-          return deferred.promise;
-        },
+        getUserInfo: getUserInfo,
 
         getUserLibrary: function (limit, skip) {
           if(limit || skip ){
