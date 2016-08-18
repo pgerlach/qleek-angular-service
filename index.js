@@ -200,7 +200,7 @@
           return this.getUserInfo()
           .then(function success (response) {
             var userCartId = response.cart;
-            return apiGet('order/' + userCartId + '?__populate=qleeks.desc,qleeks.desc.cover.imgThumb');
+            return apiGet('order/' + userCartId + '?__populate=qleeks.desc,qleeks.desc.cover.imgThumb,packs.pack');
           })
         },
 
