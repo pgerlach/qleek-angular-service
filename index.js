@@ -37,14 +37,14 @@
           data: data,
           headers: headers
         })
-            .then(
-                function success(response) {
-                  deferred.resolve(response.data);
-                },
-                function failure(reason) {
-                  deferred.reject(reason);
-                }
-            );
+        .then(
+          function success(response) {
+            deferred.resolve(response.data);
+          },
+          function failure(reason) {
+            deferred.reject(reason);
+          }
+        );
 
         return deferred.promise;
       };
