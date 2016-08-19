@@ -13,6 +13,14 @@
       API_BASE_URL = url;
     };
 
+    var options = {
+      autoCreateTemporaryUser: true
+    };
+
+    this.setOption = function(key, value) {
+      options[key] = value;
+    }
+
     // actual provider interface
     this.$get = function qleekApiFactory($q, $http) {
 
@@ -81,10 +89,14 @@
             return getUserInfo();
           });
         } else {
-          return getTemporarySession()
-          .then(function success() {
-            return getUserInfo();
-          });
+          if (options.autoCreateTemporaryUser) {
+            return getTemporarySession()
+            .then(function success() {
+              return getUserInfo();
+            });
+          } else {
+            return $q.reject("not logged in");
+          }
         }
       }
 
