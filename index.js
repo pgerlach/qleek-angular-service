@@ -225,9 +225,8 @@
           });
         },
 
-        getPacks: function (skip) {
-          if (!skip) { skip = 0; }
-          return apiGet('pack?__populate=covers.imgThumb&format=full&skip=' + skip);
+        getPacks: function (limit, skip) {
+          return apiGet("pack?__populate=covers.imgThumb&format=full" + (limit ? "&limit=" + limit : "") + (skip ? '&skip=' + skip : ""));
         },
 
         getPack: function (packId) {
