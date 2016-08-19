@@ -104,19 +104,16 @@
       return {
 
         login: function (email, password) {
-          var deferred = $q.defer();
-
-          apiPost("login", {email: email, password: password}, {noAuth: true})
+          return apiPost("login", {email: email, password: password}, {noAuth: true})
             .then(
               function success(data) {
                 setToken(data.token);
                 return getUserInfo();
               },
               function failure(reason) {
-                deferred.reject(reason.data.message);
+                return $q.reject(reason.data.message);
               }
             );
-          return deferred.promise;
         },
 
         logout: function (email, password) {
