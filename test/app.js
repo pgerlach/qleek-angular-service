@@ -2,7 +2,8 @@ var app = angular.module('qleekApiSample', ['qleek']);
 
 app.config(function(qleekApiProvider) {
   console.log("config");
-  qleekApiProvider.setURL("http://localhost:5001/api/v1/");
+  qleekApiProvider.setURL("http://localhost:5001");
+  qleekApiProvider.setOption('autoCreateTemporaryUser', false);
 });
 
 app.controller('userController', [ 'qleekApi', function($qleekApi) {
@@ -14,7 +15,17 @@ app.controller('userController', [ 'qleekApi', function($qleekApi) {
   self.inputEmail = "";
   self.inputPassword = "";
 
-  self.click = function() {
+  $qleekApi.getUserInfo()
+  .then(
+    function success(response) {
+      console.log("GET USER INFO SUCCESS", response);
+    },
+    function failure(reason) {
+      console.log("GET USER INFO FAILURE", reason);
+    }
+  );
+
+  self.login = function() {
     console.log("Try login with", self.inputEmail, "/", self.inputPassword);
     $qleekApi.login(self.inputEmail, self.inputPassword)
     .then(
@@ -35,6 +46,11 @@ app.controller('userController', [ 'qleekApi', function($qleekApi) {
         self.errorMessage = "Login failed";
       }
     );
-  }
+  };
+
+  self.logout = function() {
+    $qleekApi.logout();
+    self.userName = null;
+  };
 
 }]);

@@ -12,7 +12,8 @@
    <input type="password" placeholder="your password" ng-model="ctrl.inputPassword"></input>
     <p>{{ctrl.userName}}</p>
     <p ng-show="ctrl.errorMessage != null">Error: {{ctrl.errorMessage}}</p>
-    <input value="LOGIN" type="button" ng-click="ctrl.click()"></input>
+    <input value="LOGIN" type="button" ng-click="ctrl.login()"></input>
+    <input value="LOGOUT" type="button" ng-click="ctrl.logout()"></input>
   </div>
 </body>
 </html>
