@@ -231,6 +231,48 @@
 
         getPack: function (packId) {
           return apiGet('pack/' + packId + '?__populate=covers.imgThumb');
+        },
+
+        resolveContent: function (url) {
+
+          var deferred = $q.defer()
+          var backendRegExp = new RegExp('https?:\/\/qleek-backend.herokuapp.com')
+          var soundcloudRegExp = new RegExp('https?:\/\/api.soundcloud.com\/');
+          var spotifyRegExp = new RegExp('spotify*:[a-zA-Z]*:[0-9A-Za-z]*:?[0-9A-Za-z]*:?[0-9A-Za-z]*:?');
+          if(backendRegExp.test(url)){
+            $http({
+              url: url,
+              method: 'GET'
+            }).then(
+              function success (response) {
+                if(soundcloudRegExp.test(response.data.content.data.playbackURI)){
+                  $http({
+                    url: response.data.content.data.playbackURI + '?client_id=10948b9a846970f4ed4d0dc6e42d6e77',
+                    method: 'GET'
+                  }).then(
+                    function success (response) {
+                      deferred.resolve(response.data.permalink_url);
+                    }
+                  );
+                } else if (spotifyRegExp.test(response.data.content.data.uri)) {
+                  var spotifyUri = response.data.content.data.uri;
+                  spotifyUri = spotifyUri.replace('spotify:', '');
+                  spotifyUri = spotifyUri.replace(/:/g, '/');
+                  deferred.resolve('https://open.spotify.com/' + spotifyUri);
+                } else {
+                  deferred.resolve('invalid');
+                }
+              },
+              function failure (response) {
+                deferred.reject(response.data);
+              }
+            );
+          } else {
+            deferred.reject('The QR code is invalid');
+          }
+          
+          return deferred.promise;
+          
         }
 
       }
