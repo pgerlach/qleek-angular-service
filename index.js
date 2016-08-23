@@ -273,6 +273,17 @@
           
           return deferred.promise;
           
+        },
+
+        registerUser: function (user) {
+
+          return apiPost('user', user)
+          .then(function success (response) {
+            return response;
+          }, function failure (response) {
+            return response;
+          }); 
+
         }
 
       }
