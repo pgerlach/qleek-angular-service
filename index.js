@@ -287,7 +287,7 @@
         },
 
         getCovers: function (limit, skip) {
-          return apiGet("cover?__populate=imgThumb&format=full" + (limit ? "&limit=" + limit : "") + (skip ? '&skip=' + skip : ""));
+          return apiGet("cover?__populate=imgRes&format=full" + (limit ? "&limit=" + limit : "") + (skip ? '&skip=' + skip : ""));
         }
 
       }
