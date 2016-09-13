@@ -101,6 +101,9 @@
       }
 
       var getTemporarySession = function() {
+        if(API_BASE_URL == 'undefined/api/v1/') {
+          return $q.reject('config not loaded');
+        }
         return apiPost("session/temporarySession")
         .then(
           function success(response) {
