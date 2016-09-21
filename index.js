@@ -116,6 +116,40 @@
         );
       };
 
+      var addToHistory = function(res) {
+
+
+        var historyEntry = {};
+
+        if(typeof res == 'object'){
+          historyEntry.date = Date.now();
+          historyEntry.playUri = res.data.content.data.playbackURI || res.data.content.data.uri;
+          historyEntry.name = res.data.name;
+          historyEntry.coverUrl = res.data.cover.imgThumb.url;
+        }
+
+        var currentHistory = localStorage.getItem('history');
+
+        if(currentHistory != undefined || currentHistory != null) {
+          currentHistory = JSON.parse(currentHistory);
+        }    
+
+        if(typeof currentHistory == 'object') {
+          if(currentHistory == null) {
+            currentHistory = []
+          }
+
+          currentHistory.push(historyEntry);
+          localStorage.setItem('history', JSON.stringify(currentHistory));
+        } else {
+          currentHistory = [];
+          currentHistory.push(historyEntry);
+          localStorage.setItem('history', JSON.stringify(currentHistory));
+        }
+
+
+      };
+
       return {
 
         login: function (email, password) {
@@ -253,14 +287,16 @@
                     url: response.data.content.data.playbackURI + '?client_id=10948b9a846970f4ed4d0dc6e42d6e77',
                     method: 'GET'
                   }).then(
-                    function success (response) {
-                      deferred.resolve(response.data.permalink_url);
+                    function success (res) {
+                      addToHistory(response);
+                      deferred.resolve(res.data.permalink_url);
                     }
                   );
                 } else if (spotifyRegExp.test(response.data.content.data.uri)) {
                   var spotifyUri = response.data.content.data.uri;
                   spotifyUri = spotifyUri.replace('spotify:', '');
                   spotifyUri = spotifyUri.replace(/:/g, '/');
+                  addToHistory(response);
                   deferred.resolve('https://open.spotify.com/' + spotifyUri);
                 } else {
                   deferred.resolve('invalid');
@@ -271,7 +307,23 @@
               }
             );
           } else {
-            deferred.reject('The QR code is invalid');
+            if(soundcloudRegExp.test(url)){
+                  $http({
+                    url: url + '?client_id=10948b9a846970f4ed4d0dc6e42d6e77',
+                    method: 'GET'
+                  }).then(
+                    function success (response) {
+                      deferred.resolve(response.data.permalink_url);
+                    }
+                  );
+                } else if (spotifyRegExp.test(url)) {
+                  var spotifyUri = url;
+                  spotifyUri = spotifyUri.replace('spotify:', '');
+                  spotifyUri = spotifyUri.replace(/:/g, '/');
+                  deferred.resolve('https://open.spotify.com/' + spotifyUri);
+                } else {
+                  deferred.resolve('invalid');
+                }
           }
           
           return deferred.promise;
