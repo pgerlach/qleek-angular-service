@@ -100,6 +100,15 @@
         }
       }
 
+      var updateUserInfo = function(data) {
+        var token = getToken();
+        if (token) {
+          return apiPut("user/me", data);
+        } else {
+          return $q.reject("no user to update");
+        }
+      }
+
       var getTemporarySession = function() {
         if(API_BASE_URL == 'undefined/api/v1/') {
           return $q.reject('config not loaded');
@@ -185,6 +194,7 @@
         },
 
         getUserInfo: getUserInfo,
+        updateUserInfo: updateUserInfo,
 
         getUserLibrary: function (limit, skip) {
           return apiGet("user/me/library?__populate=content,cover.imgThumb&format=full" + (limit ? "&limit=" + limit : "") + (skip ? '&skip=' + skip : ""));
