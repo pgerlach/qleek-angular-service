@@ -161,8 +161,12 @@
 
       return {
 
-        login: function (email, password) {
-          return apiPost("login", {email: email, password: password}, {noAuth: true})
+        login: function (email, password, mergeCarts) {
+          var params = {email: email, password: password};
+          if (mergeCarts) {
+            params.mergeCarts = mergeCarts;
+          }
+          return apiPost("login", params)
             .then(
               function success(data) {
                 setToken(data.token);
