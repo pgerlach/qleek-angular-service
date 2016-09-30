@@ -204,6 +204,14 @@
           return apiGet("user/me/library?__populate=content,cover.imgThumb&format=full" + (limit ? "&limit=" + limit : "") + (skip ? '&skip=' + skip : ""));
         },
 
+        getUserDevices: function (limit, skip) {
+          return apiGet("user/me/players?format=full" + (limit ? "&limit=" + limit : "") + (skip ? '&skip=' + skip : ""));
+        },
+
+        getDeviceAssociationToken: function (limit, skip) {
+          return apiGet("user/me/getTokenToRegisterNewPlayer");
+        },
+
         getQleek: function (qleekId) {
           // TODO add populate options as a parameter
           return apiGet("qleek/" + qleekId + "?__populate=content,cover.imgThumb");
