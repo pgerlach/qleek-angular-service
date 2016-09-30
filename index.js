@@ -357,6 +357,10 @@
 
         getCovers: function (limit, skip) {
           return apiGet("cover?__populate=imgRes&format=full" + (limit ? "&limit=" + limit : "") + (skip ? '&skip=' + skip : ""));
+        },
+
+        getCover: function(coverId) {
+          return apiGet("cover/" + coverId + "?__populate=imgRes");
         }
 
       }
