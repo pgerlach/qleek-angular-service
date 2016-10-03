@@ -226,6 +226,10 @@
           return apiGet("qleek/" + qleekId + "?__populate=content,cover.imgThumb");
         },
 
+        updateQleek: function (qleekId, updateData) {
+          return apiPut("qleek/" + qleekId, updateData);
+        },
+
         updateContent: function (contentId, updateData) {
           return apiPut("content/" + contentId, updateData);
         },
