@@ -161,6 +161,10 @@
 
       return {
 
+        apiGet: apiGet,
+        apiPost: apiPost,
+        apiPut: apiPut,
+
         login: function (email, password, mergeCarts) {
           var params = {email: email, password: password};
           if (mergeCarts) {
