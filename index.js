@@ -60,6 +60,10 @@
         return api('GET', endpoint, null, options);
       };
 
+      var apiDelete = function (endpoint, options) {
+        return api('DELETE', endpoint, null, options);
+      };
+
       var apiPost = function (endpoint, data, options) {
         return api('POST', endpoint, data, options);
       };
@@ -164,6 +168,7 @@
         apiGet: apiGet,
         apiPost: apiPost,
         apiPut: apiPut,
+        apiDelete: apiDelete,
 
         login: function (email, password, mergeCarts) {
           var params = {email: email, password: password};
