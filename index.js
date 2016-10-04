@@ -38,11 +38,16 @@
           headers.Authorization = getToken();
         }
 
+        if (options.params && options.params.__populate && Array.isArray(options.params.__populate)) {
+          options.params.__populate = options.params.__populate.join(",");
+        }
+
         $http({
           url: API_BASE_URL + endpoint,
           method: method,
           data: data,
-          headers: headers
+          headers: headers,
+          params: options.params
         })
         .then(
           function success(response) {
@@ -209,21 +214,21 @@
         getUserInfo: getUserInfo,
         updateUserInfo: updateUserInfo,
 
-        getUserLibrary: function (limit, skip) {
-          return apiGet("user/me/library?__populate=content,cover.imgThumb&format=full" + (limit ? "&limit=" + limit : "") + (skip ? '&skip=' + skip : ""));
+        getUserLibrary: function (limit, skip, populateFields) {
+          return apiGet("user/me/library", {params: {limit: limit, skip: skip, __populate: populateFields, format: "full"}});
         },
 
         getUserDevices: function (limit, skip) {
-          return apiGet("user/me/players?format=full" + (limit ? "&limit=" + limit : "") + (skip ? '&skip=' + skip : ""));
+          return apiGet("user/me/players", {params: {limit: limit, skip: skip, format: "full"}});
         },
 
-        getDeviceAssociationToken: function (limit, skip) {
+        getDeviceAssociationToken: function () {
           return apiGet("user/me/getTokenToRegisterNewPlayer");
         },
 
-        getQleek: function (qleekId) {
+        getQleek: function (qleekId, populateFields) {
           // TODO add populate options as a parameter
-          return apiGet("qleek/" + qleekId + "?__populate=content,cover.imgThumb");
+          return apiGet("qleek/" + qleekId, {params: { __populate: populateFields}});
         },
 
         updateQleek: function (qleekId, updateData) {
@@ -235,7 +240,7 @@
         },
 
         getContentFromUri: function(uri) {
-          return apiGet("content/fromUri?uri=" + encodeURIComponent(uri));
+          return apiGet("content/fromUri", {params: {uri: uri}});
         },
 
         getStreamableTracks: function (uri, kind) {
@@ -268,12 +273,12 @@
           return deferred.promise;
         },
 
-        getOrder: function () {
+        getOrder: function (populateFields) {
           // FIXME we should remember the cartId so as not to re-query it every time
           return this.getUserInfo()
           .then(function success (response) {
             var userCartId = response.cart;
-            return apiGet('order/' + userCartId + '?__populate=qleeks.desc.cover.imgThumb,packs.pack,qleeks.cover.imgThumb');
+            return apiGet('order/' + userCartId, {params: { __populate: populateFields}});
           })
         },
 
@@ -297,12 +302,12 @@
           });
         },
 
-        getPacks: function (limit, skip) {
-          return apiGet("pack?__populate=covers.imgThumb&format=full" + (limit ? "&limit=" + limit : "") + (skip ? '&skip=' + skip : ""));
+        getPacks: function (limit, skip, populateFields) {
+          return apiGet("pack", {params: {limit: limit, skip: skip, __populate: populateFields, format: "full"}});
         },
 
-        getPack: function (packId) {
-          return apiGet('pack/' + packId + '?__populate=covers.imgThumb');
+        getPack: function (packId, populateFields) {
+          return apiGet('pack/' + packId, {params: { __populate: populateFields}});;
         },
 
         resolveContent: function (url) {
@@ -376,12 +381,12 @@
 
         },
 
-        getCovers: function (limit, skip) {
-          return apiGet("cover?__populate=imgRes&format=full" + (limit ? "&limit=" + limit : "") + (skip ? '&skip=' + skip : ""));
+        getCovers: function (limit, skip, populateFields) {
+          return apiGet("cover", {params: {limit: limit, skip: skip, __populate: populateFields, format: "full"}});
         },
 
-        getCover: function(coverId) {
-          return apiGet("cover/" + coverId + "?__populate=imgRes");
+        getCover: function(coverId, populateFields) {
+          return apiGet("cover/" + coverId, {params: {__populate: populateFields}});
         }
 
       }
