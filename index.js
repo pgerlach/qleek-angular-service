@@ -296,9 +296,6 @@
           .then(function success (response) {
             var userCartId = response.cart;
             return apiPost('checkout', data)
-            .then(function success (response) {
-              return response;
-            });
           });
         },
 
