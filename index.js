@@ -33,8 +33,7 @@
         }
 
         var headers = options.headers || {};
-        if (!options.noAuth) {
-          // TODO check that we have a sessionToken
+        if (!options.noAuth && getToken()) {
           headers.Authorization = getToken();
         }
 
