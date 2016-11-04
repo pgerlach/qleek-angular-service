@@ -88,16 +88,19 @@
         localStorage.removeItem("token");
       };
 
-      var getUserInfo = function () {
+      var getUserInfo = function (userId) {
+        if (userId === undefined) {
+          userId = "me";
+        }
         var token = getToken();
         if (token) {
-          return apiGet("user/me")
+          return apiGet("user/" + userId)
           .catch(function failure(reason) {
             removeToken();
             return getUserInfo();
           });
         } else {
-          if (options.autoCreateTemporaryUser) {
+          if (options.autoCreateTemporaryUser && userId === "me") {
             return getTemporarySession()
             .then(function success() {
               return getUserInfo();
