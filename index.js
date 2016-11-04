@@ -386,6 +386,12 @@
 
         getCover: function(coverId, populateFields) {
           return apiGet("cover/" + coverId, {params: {__populate: populateFields}});
+        },
+
+        ////// METHODS RESTRICTED TO ADMINS //////
+
+        adminUpdateQleek(qleekId, updateData) {
+          return apiPut("admin/qleek/" + qleekId, updateData);
         }
 
       }
