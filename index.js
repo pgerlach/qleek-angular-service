@@ -135,8 +135,6 @@
       };
 
       var addToHistory = function(res) {
-
-
         var historyEntry = {};
 
         if(typeof res == 'object'){
@@ -164,8 +162,6 @@
           currentHistory.push(historyEntry);
           localStorage.setItem('history', JSON.stringify(currentHistory));
         }
-
-
       };
 
       return {
@@ -384,8 +380,11 @@
 
         getCover: function(coverId, populateFields) {
           return apiGet("cover/" + coverId, {params: {__populate: populateFields}});
-        }
+        },
 
+        postCover: function(cover) {
+          return apiPost("cover", cover)
+        }
       }
     }
   });
