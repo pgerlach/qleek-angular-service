@@ -33,8 +33,7 @@
         }
 
         var headers = options.headers || {};
-        if (!options.noAuth) {
-          // TODO check that we have a sessionToken
+        if (!options.noAuth && getToken()) {
           headers.Authorization = getToken();
         }
 
@@ -89,16 +88,19 @@
         localStorage.removeItem("token");
       };
 
-      var getUserInfo = function () {
+      var getUserInfo = function (userId) {
+        if (userId === undefined) {
+          userId = "me";
+        }
         var token = getToken();
         if (token) {
-          return apiGet("user/me")
+          return apiGet("user/" + userId)
           .catch(function failure(reason) {
             removeToken();
             return getUserInfo();
           });
         } else {
-          if (options.autoCreateTemporaryUser) {
+          if (options.autoCreateTemporaryUser && userId === "me") {
             return getTemporarySession()
             .then(function success() {
               return getUserInfo();
@@ -381,6 +383,12 @@
         getCover: function(coverId, populateFields) {
           return apiGet("cover/" + coverId, {params: {__populate: populateFields}});
         },
+        
+        ////// METHODS RESTRICTED TO ADMINS //////
+
+        adminUpdateQleek(qleekId, updateData) {
+          return apiPut("admin/qleek/" + qleekId, updateData);
+        }
 
         postCover: function(cover) {
           return apiPost("cover", cover)
