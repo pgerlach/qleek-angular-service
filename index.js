@@ -388,7 +388,7 @@
 
         adminUpdateQleek(qleekId, updateData) {
           return apiPut("admin/qleek/" + qleekId, updateData);
-        }
+        },
 
         postCover: function(cover) {
           return apiPost("cover", cover)
