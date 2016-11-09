@@ -237,6 +237,10 @@
           return apiPut("content/" + contentId, updateData);
         },
 
+        createContent: function (data) {
+          return apiPost("content", data);
+        },
+
         getContentFromUri: function(uri) {
           return apiGet("content/fromUri", {params: {uri: uri}});
         },
