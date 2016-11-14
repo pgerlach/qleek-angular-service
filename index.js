@@ -450,6 +450,16 @@
             return o._id;
           }
           return null;
+        },
+
+        documentsAreEqual: function(a, b) {
+          if (a && a.hasOwnProperty("_id")) {
+            a = a._id;
+          }
+          if (b && b.hasOwnProperty("_id")) {
+            b = b._id;
+          }
+          return a === b;
         }
 
       }
