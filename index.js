@@ -396,7 +396,21 @@
 
         postCover: function(cover) {
           return apiPost("cover", cover)
+        },
+
+        /////// UTILITIES METHODS ////////
+
+        // Returns the object id of an object. o can be either an object or directly an object id
+        // There is no real check : this method should not be used for validation !
+        getObjectId: function(o) {
+          if (typeof o === "string") {
+            return o;
+          } else if (o.hasOwnProperty("_id")) {
+            return o._id;
+          }
+          return null;
         }
+
       }
     }
   });
