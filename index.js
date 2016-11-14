@@ -388,6 +388,19 @@
           return apiGet("cover/" + coverId, {params: {__populate: populateFields}});
         },
         
+        // width and height are optional, but must be specified together
+        getImage: function(image, width, height) {
+          var imageId = this.getObjectId(image);
+          var opts = {};
+          if (width !== undefined && height !== undefined) {
+            opts.params = {
+              width: width,
+              height: height
+            }
+          }
+          return apiGet("image/" + imageId, opts);
+        },
+
         ////// METHODS RESTRICTED TO ADMINS //////
 
         adminUpdateQleek(qleekId, updateData) {
