@@ -413,6 +413,34 @@
 
         /////// UTILITIES METHODS ////////
 
+        /*
+         * updates a cover object with a thumbnail of the correct size
+         * If there is already a thumbnail, use it. Else, try to use a
+         * resized version of the picture used to print the qleek. If not
+         * available, use the first illustrating picture.
+         */
+        updateCoverThumbnail: function(cover, width, height) {
+          // if there is a thumbnail already, use it
+          if (cover.imgThumb && cover.imgThumb.url) {
+            // nothing to do
+            return ;
+          } else if (cover.imgRes) {
+            // else try to show a thumbnail of the actual cover
+            return this.getImage(cover.imgRes, 88, 76)
+            .then(function success(img) {
+              cover.imgThumb = img;
+            });
+          } else if (cover.pictures && cover.pictures.length > 0) {
+            // else try to resize one of the pictures
+            return this.getImage(cover.pictures[0], 88, 76)
+            .then(function success(img) {
+              cover.imgThumb = img;
+            });
+          } else {
+            // nothing we can do
+          }
+        },
+
         // Returns the object id of an object. o can be either an object or directly an object id
         // There is no real check : this method should not be used for validation !
         getObjectId: function(o) {
