@@ -411,6 +411,14 @@
           return apiPost("cover", cover)
         },
 
+        adminGetOrders(limit, skip, populateFields) {
+          return apiGet("admin/orders", {params: {limit: limit, skip: skip, __populate: populateFields, format: "full"}});
+        },
+
+        adminGetOrder(orderId, populateFields) {
+          return apiGet("admin/order/" + orderId, {params: {__populate: populateFields}});
+        },
+
         /////// UTILITIES METHODS ////////
 
         /*
