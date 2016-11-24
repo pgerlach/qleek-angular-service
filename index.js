@@ -411,8 +411,8 @@
           return apiPost("cover", cover)
         },
 
-        adminGetOrders(limit, skip, populateFields) {
-          return apiGet("admin/orders", {params: {limit: limit, skip: skip, __populate: populateFields, format: "full"}});
+        adminGetOrders(limit, skip, populateFields, status) {
+          return apiGet("admin/orders", {params: {limit: limit, skip: skip, __populate: populateFields, format: "full", status: (status || "paid")}});
         },
 
         adminGetOrder(orderId, populateFields) {
