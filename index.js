@@ -419,6 +419,10 @@
           return apiGet("admin/order/" + orderId, {params: {__populate: populateFields}});
         },
 
+        adminUpdateOrder(orderId, data) {
+          return apiPut("admin/order/" + orderId, data);
+        },
+
         /////// UTILITIES METHODS ////////
 
         /*
