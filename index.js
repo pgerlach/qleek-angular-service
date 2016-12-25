@@ -425,6 +425,19 @@
 
         /////// UTILITIES METHODS ////////
 
+        hasAccountForService(serviceName) {
+          return apiGet("user/me/setting/" + serviceName)
+          .then(function(success) {
+            return $q.resolve(true);
+          })
+          .catch(function(reason) {
+            if (reason.statusCode === 404) {
+              return $q.resolve(false);
+            }
+            return $q.reject(reason);
+          });
+        },
+
         /*
          * updates a cover object with a thumbnail of the correct size
          * If there is already a thumbnail, use it. Else, try to use a
