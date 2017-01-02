@@ -225,7 +225,6 @@
         },
 
         getQleek: function (qleekId, populateFields) {
-          // TODO add populate options as a parameter
           return apiGet("qleek/" + qleekId, {params: { __populate: populateFields}});
         },
 
@@ -466,15 +465,20 @@
           }
         },
 
+        // is this a 'regular shared' cover or a custom one ?
+        isCustomCover: function(cover) {
+          return !cover.public;
+        },
+
         // Returns the object id of an object. o can be either an object or directly an object id
         // There is no real check : this method should not be used for validation !
         getObjectId: function(o) {
           if (typeof o === "string") {
             return o;
-          } else if (o.hasOwnProperty("_id")) {
+          } else if (o.hasOwnProperty("_id") && (typeof o._id === "string")) {
             return o._id;
           }
-          return null;
+          throw new Error("o is neither a document nor an ObjectId");
         },
 
         documentsAreEqual: function(a, b) {
@@ -484,7 +488,10 @@
           if (b && b.hasOwnProperty("_id")) {
             b = b._id;
           }
-          return a === b;
+          if (typeof a !== "string" || typeof b !== "string" || a.length !== 24 || b.length !== 24) {
+            throw new Error("a and/or b is neither a document nor an ObjectId");
+          }
+          return (a === b);
         },
 
         isQleekNew: function(qleekId) {
@@ -493,6 +500,10 @@
             console.log(qleek.owner === "000000000000000000000000")
             return qleek.owner === "000000000000000000000000";
           });
+        },
+
+        isDummyDocument: function(o) {
+          return (this.getObjectId(o) === "000000000000000000000000");
         }
 
       }
