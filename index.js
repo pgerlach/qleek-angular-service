@@ -422,6 +422,35 @@
           return apiPut("admin/order/" + orderId, data);
         },
 
+        /////// METHODS WITH SOME LOGIC IN THEM ///////
+
+        // updates a Qleek's content. It's more complicated that just updating
+        // the content, because it depends if the content belongs to the user
+        // or not.
+        updateQleekContent(qleek, newContentData) {
+          var self = this;
+          return self.getQleek(self.getObjectId(qleek), ["content"])
+          .then(function(response) {
+            qleek = response;
+            return self.getUserInfo()
+          })
+          .then(function(user) {
+            // update content. Two possibilities : content is ours, or not. If not : create a new one.
+            if (self.documentsAreEqual(qleek.content.owner, user)) {
+              return self.updateContent(qleek.content._id, newContentData);
+            } else {
+              return self.createContent(newContentData)
+              .then(function success(content) {
+                // now update the qleek w/ the new content
+                return self.updateQleek(qleek._id, {content: content._id});
+              });
+            }
+          })
+          .catch(function(reason) {
+            self.errorMessage = reason.data.message;
+          });
+        },
+
         /////// UTILITIES METHODS ////////
 
         hasAccountForService(serviceName) {
