@@ -250,34 +250,13 @@
           return apiGet("content/fromUri", {params: {uri: uri}});
         },
 
-        getStreamableTracks: function (uri, kind) {
-          var deferred = $q.defer()
-          var counter = 0;
-          var userid = null;
-          var result = {};
-          var type = null;
-          $http({
+        countSoundcloudStreamableTracks: function (uri) {
+          return $http({
             url: uri + '/tracks?client_id=' + config.SOUNDCLOUD_CLIENT_ID,
             method: 'GET'
           }).then(function success (response) {
-            for(var i in response.data){
-              if(response.data[i].streamable){
-                counter++
-              }
-            }
-            type = kind === 'playlist' ? 'playlist' : 'artist';
-            if(counter < 10){
-              if(!counter){
-                result.message = 'This ' + type + ' has no available tracks on qleek';
-                result.counter = counter;
-              } else {
-                result.message = 'This ' + type + ' has only ' + counter + ' tracks available on Qleek';
-                result.counter = counter;
-              }
-              deferred.resolve(result);
-            }
+            return _.reduce(response.data, function(memo, track) {return memo + !!(track.streamable)}, 0);
           });
-          return deferred.promise;
         },
 
         getOrder: function (populateFields) {
