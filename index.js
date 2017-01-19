@@ -234,8 +234,8 @@
           return apiGet("qleek/" + qleekId, {params: { __populate: populateFields}});
         },
 
-        updateQleek: function (qleekId, updateData) {
-          return apiPut("qleek/" + qleekId, updateData);
+        updateQleek: function (qleek, updateData) {
+          return apiPut("qleek/" + this.getObjectId(qleek), updateData);
         },
 
         updateContent: function (contentId, updateData) {
