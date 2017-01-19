@@ -17,8 +17,14 @@
       autoCreateTemporaryUser: true
     };
 
+    var config = {};
+
     this.setOption = function(key, value) {
       options[key] = value;
+    }
+
+    this.setConfigKey = function(key, value) {
+      config[key] = value;
     }
 
     // actual provider interface
