@@ -293,64 +293,32 @@
           return apiGet('pack/' + packId, {params: { __populate: populateFields}});;
         },
 
-        resolveContent: function (url) {
-
-          var deferred = $q.defer()
-          var backendRegExp = new RegExp('https?:\/\/qleek-backend.herokuapp.com')
-          var soundcloudRegExp = new RegExp('https?:\/\/api.soundcloud.com\/');
-          var spotifyRegExp = new RegExp('spotify*:[a-zA-Z]*:[0-9A-Za-z]*:?[0-9A-Za-z]*:?[0-9A-Za-z]*:?');
-          if(backendRegExp.test(url)){
-            $http({
-              url: url,
-              method: 'GET'
-            }).then(
-              function success (response) {
-                if(soundcloudRegExp.test(response.data.content.data.playbackURI)){
-                  $http({
-                    url: response.data.content.data.playbackURI + '?client_id=10948b9a846970f4ed4d0dc6e42d6e77',
-                    method: 'GET'
-                  }).then(
-                    function success (res) {
-                      addToHistory(response);
-                      deferred.resolve(res.data.permalink_url);
-                    }
-                  );
-                } else if (spotifyRegExp.test(response.data.content.data.uri)) {
-                  var spotifyUri = response.data.content.data.uri;
-                  spotifyUri = spotifyUri.replace('spotify:', '');
-                  spotifyUri = spotifyUri.replace(/:/g, '/');
-                  addToHistory(response);
-                  deferred.resolve('https://open.spotify.com/' + spotifyUri);
-                } else {
-                  deferred.resolve('invalid');
-                }
-              },
-              function failure (response) {
-                deferred.reject(response.data);
-              }
-            );
-          } else {
-            if(soundcloudRegExp.test(url)){
-                  $http({
-                    url: url + '?client_id=10948b9a846970f4ed4d0dc6e42d6e77',
-                    method: 'GET'
-                  }).then(
-                    function success (response) {
-                      deferred.resolve(response.data.permalink_url);
-                    }
-                  );
-                } else if (spotifyRegExp.test(url)) {
-                  var spotifyUri = url;
-                  spotifyUri = spotifyUri.replace('spotify:', '');
-                  spotifyUri = spotifyUri.replace(/:/g, '/');
-                  deferred.resolve('https://open.spotify.com/' + spotifyUri);
-                } else {
-                  deferred.resolve('invalid');
-                }
+        // returns a URI we can use to play the content on a mobile device
+        // ideally this will be done in the backend
+        resolveMobilePlayUriFromContent: function(content) {
+          if (content.data.mobilePlayUri) {
+            return $q.resolve(content.data.mobilePlayUri)
           }
-          
-          return deferred.promise;
-          
+          var uri = content.data.uri || content.data.playbackURI;
+
+          var soundcloudRegExp = /https?:\/\/api.soundcloud.com\//;
+          var spotifyRegExp = /^spotify*:[a-zA-Z]*:[0-9A-Za-z]*:?[0-9A-Za-z]*:?[0-9A-Za-z]*:?/;
+
+          if (soundcloudRegExp.test(uri)) {
+            return $http.get(uri, {
+              params: {
+                client_id: config.SOUNDCLOUD_CLIENT_ID
+              }
+            })
+            .then(function success (response) {
+              return $q.resolve(response.data.permalink_url);
+            });
+          } else if (spotifyRegExp.test(uri)) {
+            var spotifyUri = uri.replace(/^spotify:/, '').replace(/:/g, '/');
+            return $q.resolve('https://open.spotify.com/' + spotifyUri);
+          } else {
+            return $q.reject("unknown content type");
+          }
         },
 
         registerUser: function (user) {
