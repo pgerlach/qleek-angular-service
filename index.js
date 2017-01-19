@@ -532,7 +532,6 @@
         isQleekNew: function(qleekId) {
           return apiGet("qleek/" + qleekId + "?__noAssoc=1")
           .then(function(qleek) {
-            console.log(qleek.owner === "000000000000000000000000")
             return qleek.owner === "000000000000000000000000";
           });
         },
