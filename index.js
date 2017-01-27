@@ -230,8 +230,8 @@
           return apiGet("user/me/getTokenToRegisterNewPlayer");
         },
 
-        getQleek: function (qleekId, populateFields) {
-          return apiGet("qleek/" + qleekId, {params: { __populate: populateFields}});
+        getQleek: function (qleekId, populateFields, assocToUserIfNew) {
+          return apiGet("qleek/" + qleekId, {params: { __populate: populateFields, __assocToUserIfNew: assocToUserIfNew}});
         },
 
         updateQleek: function (qleek, updateData) {
