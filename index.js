@@ -19,6 +19,9 @@
 
     var config = {};
 
+    // keep the user in "cache" because we use getUserInfo very ofter
+    var cachedUser = null;
+
     this.setOption = function(key, value) {
       options[key] = value;
     }
@@ -92,16 +95,30 @@
 
       var removeToken = function () {
         localStorage.removeItem("token");
+        cachedUser = null;
       };
 
       var getUserInfo = function (userId) {
         if (userId === undefined) {
           userId = "me";
         }
+        if (userId === "me" && cachedUser !== null) {
+          return $q.resolve(cachedUser);
+        }
         var token = getToken();
         if (token) {
+          if (cachedUser) {
+            return cachedUser;
+          }
           return apiGet("user/" + userId)
+          .then(function(user) {
+            if (userId === "me") {
+              cachedUser = user;
+            }
+            return user;
+          })
           .catch(function failure(reason) {
+            // token was expired. Return a temporary one ?
             removeToken();
             return getUserInfo();
           });
@@ -197,22 +214,16 @@
         },
 
         logout: function (email, password) {
-          var deferred = $q.defer();
-
-          apiPost("logout")
-          .then(
-              function success(data) {
-                removeToken();
-                deferred.resolve();
-              },
-              function failure(reason) {
-                // forget session token anyway, although it is still usable: the user asked to logout
-                removeToken();
-                deferred.reject(reason.data.message);
-              }
-          );
-
-          return deferred.promise;
+          return apiPost("logout")
+          .then(function success(data) {
+            return $q.resolve();
+          })
+          .catch(function() {
+            return $q.reject(reason.data.message);
+          })
+          .finally(function() {
+            removeToken();
+          });
         },
 
         getUserInfo: getUserInfo,
