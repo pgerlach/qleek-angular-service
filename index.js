@@ -479,7 +479,7 @@
         isQleekNew: function(qleekId) {
           return apiGet("qleek/" + qleekId + "?__noAssoc=1")
           .then(function(qleek) {
-            return qleek.owner === "000000000000000000000000";
+            return this.isDummyDocument(qleek.owner);
           });
         },
 
