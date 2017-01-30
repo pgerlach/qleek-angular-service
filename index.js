@@ -208,6 +208,8 @@
                 return getUserInfo();
               },
               function failure(reason) {
+                removeToken();
+                cachedUser = null;
                 return $q.reject(reason.data.message);
               }
             );
