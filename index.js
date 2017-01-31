@@ -87,6 +87,7 @@
 
       var setToken = function (sessionToken) {
         localStorage.setItem("token", sessionToken);
+        cachedUser = null;
       };
 
       var getToken = function () {
@@ -102,20 +103,17 @@
         if (userId === undefined) {
           userId = "me";
         }
-        if (userId === "me" && cachedUser !== null) {
-          return $q.resolve(cachedUser);
-        }
         var token = getToken();
         if (token) {
-          if (cachedUser) {
-            return cachedUser;
+          if (userId === "me" && cachedUser) {
+            return $q.resolve(cachedUser);
           }
           return apiGet("user/" + userId)
           .then(function(user) {
             if (userId === "me") {
               cachedUser = user;
             }
-            return user;
+            return $q.resolve(user);
           })
           .catch(function failure(reason) {
             // token was expired. Return a temporary one ?
@@ -148,15 +146,10 @@
           return $q.reject('config not loaded');
         }
         return apiPost("session/temporarySession")
-        .then(
-          function success(response) {
-            setToken(response.token);
-            return response;
-          },
-          function failure(reason) {
-            return reason;
-          }
-        );
+        .then(function success(response) {
+          setToken(response.token);
+          return response;
+        });
       };
 
       var addToHistory = function(res) {
@@ -209,7 +202,6 @@
               },
               function failure(reason) {
                 removeToken();
-                cachedUser = null;
                 return $q.reject(reason.data.message);
               }
             );
