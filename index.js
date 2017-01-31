@@ -194,6 +194,7 @@
           if (mergeCarts) {
             params.mergeCarts = mergeCarts;
           }
+          removeToken();
           return apiPost("login", params)
             .then(
               function success(data) {
