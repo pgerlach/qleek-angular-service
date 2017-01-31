@@ -208,13 +208,13 @@
             );
         },
 
-        logout: function (email, password) {
+        logout: function () {
           return apiPost("logout")
           .then(function success(data) {
             return $q.resolve();
           })
-          .catch(function() {
-            return $q.reject(reason.data.message);
+          .catch(function(reason) {
+            // token will be removed anyway, no need to tell the user
           })
           .finally(function() {
             removeToken();
