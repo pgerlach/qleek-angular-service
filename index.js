@@ -154,36 +154,6 @@
         });
       };
 
-      var addToHistory = function(res) {
-        var historyEntry = {};
-
-        if(typeof res == 'object'){
-          historyEntry.date = Date.now();
-          historyEntry.playUri = res.data.content.data.playbackURI || res.data.content.data.uri;
-          historyEntry.name = res.data.name;
-          historyEntry.coverUrl = res.data.cover.imgThumb.url;
-        }
-
-        var currentHistory = localStorage.getItem('history');
-
-        if(currentHistory != undefined || currentHistory != null) {
-          currentHistory = JSON.parse(currentHistory);
-        }    
-
-        if(typeof currentHistory == 'object') {
-          if(currentHistory == null) {
-            currentHistory = []
-          }
-
-          currentHistory.push(historyEntry);
-          localStorage.setItem('history', JSON.stringify(currentHistory));
-        } else {
-          currentHistory = [];
-          currentHistory.push(historyEntry);
-          localStorage.setItem('history', JSON.stringify(currentHistory));
-        }
-      };
-
       return {
 
         apiGet: apiGet,
