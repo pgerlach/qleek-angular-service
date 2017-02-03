@@ -211,7 +211,6 @@
       };
 
       self.getOrder = function (populateFields) {
-        // FIXME we should remember the cartId so as not to re-query it every time
         return self.getUserInfo()
         .then(function success (response) {
           var userCartId = response.cart;
@@ -220,7 +219,6 @@
       };
 
       self.updateOrder = function (data) {
-        // FIXME we should remember the cartId so as not to re-query it every time
         return self.getUserInfo()
         .then(function success (response) {
           var userCartId = response.cart;
