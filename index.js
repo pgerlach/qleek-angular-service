@@ -31,7 +31,7 @@
     }
 
     // actual provider interface
-    this.$get = function qleekApiFactory($q, $http) {
+    this.$get = function qleekApiFactory($q, $http, $rootScope) {
 
       // internal functions
       var api = function (method, endpoint, data, options) {
@@ -97,6 +97,7 @@
       var removeToken = function () {
         localStorage.removeItem("token");
         cachedUser = null;
+        $rootScope.$emit('qleekApi:loggedOut');
       };
 
       var getUserInfo = function (userId) {
@@ -112,6 +113,7 @@
           .then(function(user) {
             if (userId === "me") {
               cachedUser = user;
+              $rootScope.$emit('qleekApi:loggedIn', user);
             }
             return $q.resolve(user);
           })
