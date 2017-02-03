@@ -374,11 +374,19 @@
 
       self.isDummyDocument = function(o) {
         return (self.getObjectId(o) === "000000000000000000000000");
-      }
+      };
+
+      // returns true if a 'real' user is logged in (not a temporary one)
+      self.isLoggedIn = function() {
+        return self.getUserInfo()
+        .then(function(user) {
+          return (user.role !== 'temporary');
+        });
+      };
 
       return _.pick(self, [
         "apiGet", "apiPost", "apiPut", "apiDelete",
-        "login", "logout",
+        "login", "logout", "isLoggedIn",
         "getUserInfo", "updateUserInfo",
         "getUserLibrary", "getUserDevices",
         "getDeviceAssociationToken",
