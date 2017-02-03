@@ -2,10 +2,10 @@
   'use strict';
 
   angular
-    .module('qleek', [])
-    .provider('qleekApi', function qleekApiProvider() {
+  .module('qleek', [])
+  .provider('qleekApi', function qleekApiProvider() {
 
-      var self = this;
+    var self = this;
 
     // base url, settable by calling setURL
     self.API_BASE_URL = null; // "http://localhost:5001/api/v1/";
@@ -66,7 +66,7 @@
           function failure(reason) {
             deferred.reject(reason);
           }
-        );
+          );
 
         return deferred.promise;
       };
@@ -156,80 +156,80 @@
         });
       };
 
-        self.login = function (email, password, mergeCarts) {
-          var params = {email: email, password: password};
-          if (mergeCarts) {
-            params.mergeCarts = mergeCarts;
+      self.login = function (email, password, mergeCarts) {
+        var params = {email: email, password: password};
+        if (mergeCarts) {
+          params.mergeCarts = mergeCarts;
+        }
+        self.removeToken();
+        return self.apiPost("login", params)
+        .then(
+          function success(data) {
+            self.setToken(data.token);
+            return self.getUserInfo();
+          },
+          function failure(reason) {
+            self.removeToken();
+            return $q.reject(reason.data.message);
           }
-          self.removeToken();
-          return self.apiPost("login", params)
-            .then(
-              function success(data) {
-                self.setToken(data.token);
-                return self.getUserInfo();
-              },
-              function failure(reason) {
-                self.removeToken();
-                return $q.reject(reason.data.message);
-              }
-            );
-        };
+          );
+      };
 
-        self.logout = function () {
-          return self.apiPost("logout")
-          .then(function success(data) {
-            return $q.resolve();
-          })
-          .catch(function(reason) {
+      self.logout = function () {
+        return self.apiPost("logout")
+        .then(function success(data) {
+          return $q.resolve();
+        })
+        .catch(function(reason) {
             // token will be removed anyway, no need to tell the user
           })
-          .finally(function() {
-            self.removeToken();
-          });
-        };
+        .finally(function() {
+          self.removeToken();
+        });
+      };
 
-        self.getUserLibrary = function (limit, skip, populateFields) {
-          return self.apiGet("user/me/library", {params: {limit: limit, skip: skip, __populate: populateFields, format: "full"}});
-        };
+      self.getUserLibrary = function (limit, skip, populateFields) {
+        return self.apiGet("user/me/library", {params: {limit: limit, skip: skip, __populate: populateFields, format: "full"}});
+      };
 
-        self.getUserDevices = function (limit, skip) {
-          return self.apiGet("user/me/players", {params: {limit: limit, skip: skip, format: "full"}});
-        };
+      self.getUserDevices = function (limit, skip) {
+        return self.apiGet("user/me/players", {params: {limit: limit, skip: skip, format: "full"}});
+      };
 
-        self.getDeviceAssociationToken = function () {
-          return self.apiGet("user/me/getTokenToRegisterNewPlayer");
-        };
+      self.getDeviceAssociationToken = function () {
+        return self.apiGet("user/me/getTokenToRegisterNewPlayer");
+      };
 
-        self.getQleek = function (qleekId, populateFields, assocToUserIfNew) {
-          return self.apiGet("qleek/" + qleekId, {params: { __populate: populateFields, __assocToUserIfNew: assocToUserIfNew}});
-        };
+      self.getQleek = function (qleekId, populateFields, assocToUserIfNew) {
+        return self.apiGet("qleek/" + qleekId, {params: { __populate: populateFields, __assocToUserIfNew: assocToUserIfNew}});
+      };
 
-        self.updateQleek = function (qleek, updateData) {
-          return self.apiPut("qleek/" + self.getObjectId(qleek), updateData);
-        };
+      self.updateQleek = function (qleek, updateData) {
+        return self.apiPut("qleek/" + self.getObjectId(qleek), updateData);
+      };
 
-        self.updateContent = function (contentId, updateData) {
-          return self.apiPut("content/" + contentId, updateData);
-        };
+      self.updateContent = function (contentId, updateData) {
+        return self.apiPut("content/" + contentId, updateData);
+      };
 
-        self.createContent = function (data) {
-          return self.apiPost("content", data);
-        };
+      self.createContent = function (data) {
+        return self.apiPost("content", data);
+      };
 
-        self.getContentFromUri = function(uri) {
-          return self.apiGet("content/fromUri", {params: {uri: uri}});
-        };
+      self.getContentFromUri = function(uri) {
+        return self.apiGet("content/fromUri", {params: {uri: uri}});
+      };
 
-        self.countSoundcloudStreamableTracks = function (uri) {
-          return $http({
-            url: uri + '/tracks?client_id=' + self.config.SOUNDCLOUD_CLIENT_ID,
-            method: 'GET'
-          }).then(function success (response) {
-            return _.reduce(response.data, function(memo, track) {return memo + !!(track.streamable)}, 0);
-          });
-        };
+      self.countSoundcloudStreamableTracks = function (uri) {
+        return $http({
+          url: uri + '/tracks?client_id=' + self.config.SOUNDCLOUD_CLIENT_ID,
+          method: 'GET'
+        }).then(function success (response) {
+          return _.reduce(response.data, function(memo, track) {return memo + !!(track.streamable)}, 0);
+        });
+      };
 
-        self.getOrder = function (populateFields) {
+      self.getOrder = function (populateFields) {
           // FIXME we should remember the cartId so as not to re-query it every time
           return self.getUserInfo()
           .then(function success (response) {
@@ -391,7 +391,7 @@
          * resized version of the picture used to print the qleek. If not
          * available, use the first illustrating picture.
          */
-        self.updateCoverThumbnail = function(cover, width, height) {
+         self.updateCoverThumbnail = function(cover, width, height) {
           // if there is a thumbnail already, use it
           if (cover.imgThumb && cover.imgThumb.url) {
             // nothing to do
@@ -454,21 +454,21 @@
         }
 
         return _.pick(self, [
-            "apiGet", "apiPost", "apiPut", "apiDelete",
-            "login", "logout",
-            "getUserInfo", "updateUserInfo",
-            "getUserLibrary", "getUserDevices",
-            "getDeviceAssociationToken",
-            "getQleek", "updateQleek",
-            "updateContent", "createContent", "getContentFromUri",
-            "countSoundcloudStreamableTracks",
-            "getOrder", "updateOrder",
-            "postCheckout",
-            "getPacks", "getPack",
-            "resolveMobilePlayUriFromContent",
-            "registerUser",
-            "getCovers", "getCover",
-            "getImage",
+          "apiGet", "apiPost", "apiPut", "apiDelete",
+          "login", "logout",
+          "getUserInfo", "updateUserInfo",
+          "getUserLibrary", "getUserDevices",
+          "getDeviceAssociationToken",
+          "getQleek", "updateQleek",
+          "updateContent", "createContent", "getContentFromUri",
+          "countSoundcloudStreamableTracks",
+          "getOrder", "updateOrder",
+          "postCheckout",
+          "getPacks", "getPack",
+          "resolveMobilePlayUriFromContent",
+          "registerUser",
+          "getCovers", "getCover",
+          "getImage",
             // admin
             "adminUpdateQleek", "postCover", "adminGetOrders", "adminGetOrder", "adminUpdateOrder",
             // methods with some logic in them
@@ -476,7 +476,7 @@
             // utils
             "hasAccountForService", "updateCoverThumbnail", "isCustomCover", "getObjectId",
             "documentsAreEqual", "isQleekNew", "isDummyDocument"
-        ]);
+            ]);
 
       }
     });
