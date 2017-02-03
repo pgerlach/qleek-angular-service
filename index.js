@@ -253,34 +253,6 @@
         return self.apiGet('pack/' + packId, {params: { __populate: populateFields}});;
       };
 
-      // returns a URI we can use to play the content on a mobile device
-      // ideally this will be done in the backend
-      self.resolveMobilePlayUriFromContent = function(content) {
-        if (content.data.mobilePlayUri) {
-          return $q.resolve(content.data.mobilePlayUri)
-        }
-        var uri = content.data.uri || content.data.playbackURI;
-
-        var soundcloudRegExp = /https?:\/\/api.soundcloud.com\//;
-        var spotifyRegExp = /^spotify*:[a-zA-Z]*:[0-9A-Za-z]*:?[0-9A-Za-z]*:?[0-9A-Za-z]*:?/;
-
-        if (soundcloudRegExp.test(uri)) {
-          return $http.get(uri, {
-            params: {
-              client_id: self.config.SOUNDCLOUD_CLIENT_ID
-            }
-          })
-          .then(function success (response) {
-            return $q.resolve(response.data.permalink_url);
-          });
-        } else if (spotifyRegExp.test(uri)) {
-          var spotifyUri = uri.replace(/^spotify:/, '').replace(/:/g, '/');
-          return $q.resolve('https://open.spotify.com/' + spotifyUri);
-        } else {
-          return $q.reject("unknown content type");
-        }
-      };
-
       self.registerUser = function (user) {
         return apiPost('user', user)
         .then(function success (response) {
