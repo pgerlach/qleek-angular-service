@@ -210,15 +210,6 @@
         return self.apiGet("content/fromUri", {params: {uri: uri}});
       };
 
-      self.countSoundcloudStreamableTracks = function (uri) {
-        return $http({
-          url: uri + '/tracks?client_id=' + self.config.SOUNDCLOUD_CLIENT_ID,
-          method: 'GET'
-        }).then(function success (response) {
-          return _.reduce(response.data, function(memo, track) {return memo + !!(track.streamable)}, 0);
-        });
-      };
-
       self.getOrder = function (populateFields) {
         // FIXME we should remember the cartId so as not to re-query it every time
         return self.getUserInfo()
