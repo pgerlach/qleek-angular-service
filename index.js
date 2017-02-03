@@ -36,8 +36,6 @@
 
       // internal functions
       self.api = function (method, endpoint, data, options) {
-        var deferred = $q.defer();
-
         if (!options) {
           options = {};
         }
@@ -51,23 +49,16 @@
           options.params.__populate = options.params.__populate.join(",");
         }
 
-        $http({
+        return $http({
           url: self.API_BASE_URL + endpoint,
           method: method,
           data: data,
           headers: headers,
           params: options.params
         })
-        .then(
-          function success(response) {
-            deferred.resolve(response.data);
-          },
-          function failure(reason) {
-            deferred.reject(reason);
-          }
-          );
-
-        return deferred.promise;
+        .then(function success(response) {
+          return response.data;
+        });
       };
 
       self.apiGet = function (endpoint, options) {
