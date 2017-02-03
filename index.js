@@ -400,14 +400,14 @@
         "registerUser",
         "getCovers", "getCover",
         "getImage",
-          // admin
-          "adminUpdateQleek", "postCover", "adminGetOrders", "adminGetOrder", "adminUpdateOrder",
-          // methods with some logic in them
-          "updateQleekContent",
-          // utils
-          "hasAccountForService", "updateCoverThumbnail", "isCustomCover", "getObjectId",
-          "documentsAreEqual", "isQleekNew", "isDummyDocument"
-          ]);
+        // admin
+        "adminUpdateQleek", "postCover", "adminGetOrders", "adminGetOrder", "adminUpdateOrder",
+        // methods with some logic in them
+        "updateQleekContent",
+        // utils
+        "hasAccountForService", "updateCoverThumbnail", "isCustomCover", "getObjectId",
+        "documentsAreEqual", "isQleekNew", "isDummyDocument"
+        ]);
 
       }
     });
