@@ -10,11 +10,9 @@
     // base url, settable by calling setURL
     self.API_BASE_URL = null; // "http://localhost:5001/api/v1/";
 
-    self.options = {
+    self.config = {
       autoCreateTemporaryUser: true
     };
-
-    self.config = {};
 
     // keep the user in "cache" because we use getUserInfo very ofter
     self.cachedUser = null;
@@ -24,13 +22,14 @@
       self.API_BASE_URL = url;
     };
 
+    // legacy
     self.setOption = function(key, value) {
-      self.options[key] = value;
-    }
+      return self.setConfigKey(key, value);
+    };
 
     self.setConfigKey = function(key, value) {
       self.config[key] = value;
-    }
+    };
 
     // actual provider interface
     self.$get = function qleekApiFactory($q, $http, $rootScope) {
@@ -125,7 +124,7 @@
             return self.getUserInfo();
           });
         } else {
-          if (self.options.autoCreateTemporaryUser && userId === "me") {
+          if (self.config.autoCreateTemporaryUser && userId === "me") {
             return getTemporarySession()
             .then(function success() {
               return getUserInfo();
