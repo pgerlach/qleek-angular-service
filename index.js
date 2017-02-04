@@ -378,10 +378,7 @@
 
       // returns true if a 'real' user is logged in (not a temporary one)
       self.isLoggedIn = function() {
-        return self.getUserInfo()
-        .then(function(user) {
-          return (user.role !== 'temporary');
-        });
+        return (!!self.cachedUser && self.cachedUser.role !== "temporary");
       };
 
       return _.pick(self, [
