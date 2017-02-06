@@ -305,6 +305,9 @@
         return self.getQleek(self.getObjectId(qleek), ["content"])
         .then(function(response) {
           qleek = response;
+          if (!self.canModifyQleekContent(qleek)) {
+            return $q.reject("Can't modify this Qleek's content");
+          };
           return self.getUserInfo()
         })
         .then(function(user) {
@@ -383,6 +386,11 @@
         return (!!self.cachedUser && self.cachedUser.role !== "temporary");
       };
 
+      // qleeks made from a qleekDesc can't be modified. All the others can.
+      self.canModifyQleekContent = function(qleek) {
+        return (qleek.qleekDesc === null);
+      };
+
       return _.pick(self, [
         "apiGet", "apiPost", "apiPut", "apiDelete",
         "login", "logout", "isLoggedIn",
@@ -405,7 +413,8 @@
         "updateQleekContent",
         // utils
         "hasAccountForService", "updateCoverThumbnail", "isCustomCover", "getObjectId",
-        "documentsAreEqual", "isQleekNew", "isDummyDocument"
+        "documentsAreEqual", "isQleekNew", "isDummyDocument",
+        "canModifyQleekContent"
         ]);
 
       }
