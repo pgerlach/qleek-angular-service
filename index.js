@@ -105,7 +105,9 @@
           .then(function(user) {
             if (userId === "me") {
               self.cachedUser = user;
-              $rootScope.$emit('qleekApi:loggedIn', user);
+              if (user.role !== 'temporary') {
+                $rootScope.$emit('qleekApi:loggedIn', user);
+              }
             }
             return $q.resolve(user);
           })
