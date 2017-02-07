@@ -384,9 +384,19 @@
         return (!!self.cachedUser && self.cachedUser.role !== "temporary");
       };
 
-      // qleeks made from a qleekDesc can't be modified. All the others can if they belong to the current user.
+      // qleeks made from a qleekDesc can't be modified, even if they belong to us
+      self.isQleekContentEditable = function(qleek) {
+        return (qleek.qleekDesc === null);
+      }
+
+      // can only edit a qleek if it belongs to us and we're logged
+      self.canEditQleek = function(qleek) {
+        return (self.cachedUser && self.documentsAreEqual(qleek.owner, self.cachedUser));
+      };
+
+      // can only edit a qleek's content if we can edit the qleek _and_ the content is editable
       self.canEditQleekContent = function(qleek) {
-        return (self.cachedUser && self.documentsAreEqual(qleek.owner, self.cachedUser) && qleek.qleekDesc === null);
+        return (self.canEditQleek(qleek) && self.isQleekContentEditable(qleek));
       };
 
       return _.pick(self, [
@@ -412,7 +422,7 @@
         // utils
         "hasAccountForService", "updateCoverThumbnail", "isCustomCover", "getObjectId",
         "documentsAreEqual", "isQleekNew", "isDummyDocument",
-        "canEditQleekContent"
+        "isQleekContentEditable", "canEditQleek", "canEditQleekContent"
         ]);
 
       }
