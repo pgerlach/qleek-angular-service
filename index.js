@@ -305,7 +305,7 @@
         return self.getQleek(self.getObjectId(qleek), ["content"])
         .then(function(response) {
           qleek = response;
-          if (!self.canModifyQleekContent(qleek)) {
+          if (!self.canEditQleekContent(qleek)) {
             return $q.reject("Can't modify this Qleek's content");
           };
           return self.getUserInfo()
@@ -386,9 +386,9 @@
         return (!!self.cachedUser && self.cachedUser.role !== "temporary");
       };
 
-      // qleeks made from a qleekDesc can't be modified. All the others can.
-      self.canModifyQleekContent = function(qleek) {
-        return (qleek.qleekDesc === null);
+      // qleeks made from a qleekDesc can't be modified. All the others can if they belong to the current user.
+      self.canEditQleekContent = function(qleek) {
+        return (self.cachedUser && self.documentsAreEqual(qleek.owner, self.cachedUser) && qleek.qleekDesc === null);
       };
 
       return _.pick(self, [
@@ -414,7 +414,7 @@
         // utils
         "hasAccountForService", "updateCoverThumbnail", "isCustomCover", "getObjectId",
         "documentsAreEqual", "isQleekNew", "isDummyDocument",
-        "canModifyQleekContent"
+        "canEditQleekContent"
         ]);
 
       }
