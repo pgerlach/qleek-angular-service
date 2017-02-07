@@ -358,13 +358,11 @@
       };
 
       self.documentsAreEqual = function(a, b) {
-        if (a && a.hasOwnProperty("_id")) {
-          a = a._id;
-        }
-        if (b && b.hasOwnProperty("_id")) {
-          b = b._id;
-        }
-        if (typeof a !== "string" || typeof b !== "string" || a.length !== 24 || b.length !== 24) {
+        if (a && a.hasOwnProperty("_id")) { a = a._id; }
+        if (b && b.hasOwnProperty("_id")) { b = b._id; }
+        if (!a) { a = "null                    "; }
+        if (!b) { b = "null                    "; }
+        if (typeof a !== "string" || typeof b !== "string" || a.length !== 24 || b.length !== 24) {
           throw new Error("a and/or b is neither a document nor an ObjectId");
         }
         return (a === b);
