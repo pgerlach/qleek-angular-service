@@ -118,9 +118,9 @@
           });
         } else {
           if (self.config.autoCreateTemporaryUser && userId === "me") {
-            return getTemporarySession()
+            return self.getTemporarySession()
             .then(function success() {
-              return getUserInfo();
+              return self.getUserInfo();
             });
           } else {
             return $q.reject("not logged in");
