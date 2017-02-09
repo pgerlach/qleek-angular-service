@@ -245,7 +245,7 @@
       };
 
       self.registerUser = function (user) {
-        return apiPost('user', user)
+        return self.apiPost('user', user)
         .then(function success (response) {
           return response;
         }, function failure (response) {
