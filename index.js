@@ -141,7 +141,7 @@
         if(self.API_BASE_URL == 'undefined/api/v1/') {
           return $q.reject('config not loaded');
         }
-        return apiPost("session/temporarySession")
+        return self.apiPost("session/temporarySession")
         .then(function success(response) {
           self.setToken(response.token);
           return response;
