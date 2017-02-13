@@ -245,12 +245,7 @@
       };
 
       self.registerUser = function (user) {
-        return self.apiPost('user', user)
-        .then(function success (response) {
-          return response;
-        }, function failure (response) {
-          return response;
-        });
+        return self.apiPost('user', user);
       };
 
       self.getCovers = function (limit, skip, populateFields) {
