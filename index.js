@@ -303,11 +303,8 @@
           if (!self.canEditQleekContent(qleek)) {
             return $q.reject("Can't modify this Qleek's content");
           };
-          return self.getUserInfo()
-        })
-        .then(function(user) {
           // update content. Two possibilities : content is ours, or not. If not : create a new one.
-          if (self.documentsAreEqual(qleek.content.owner, user)) {
+          if (self.objectIsMine(qleek.content)) {
             return self.updateContent(qleek.content._id, newContentData);
           } else {
             return self.createContent(newContentData)
@@ -321,6 +318,7 @@
           self.errorMessage = reason.data.message;
         });
       };
+
       /////// UTILITIES METHODS ////////
 
       self.hasAccountForService = function(serviceName) {
@@ -384,15 +382,20 @@
         return (qleek.qleekDesc === null);
       }
 
-      // can only edit a qleek if it belongs to us and we're logged
-      self.canEditQleek = function(qleek) {
-        return (self.cachedUser && self.documentsAreEqual(qleek.owner, self.cachedUser));
-      };
-
       // can only edit a qleek's content if we can edit the qleek _and_ the content is editable
       self.canEditQleekContent = function(qleek) {
         return (self.canEditQleek(qleek) && self.isQleekContentEditable(qleek));
       };
+
+      self.objectIsMine = function(object) {
+        if (typeof object !== 'object' || !object.hasOwnProperty('owner')) {
+          throw new Error('wrong object type: need owner field');
+        }
+        return self.cachedUser && self.documentsAreEqual(self.cachedUser._id, object.owner); 
+      }
+
+      // can only edit a qleek if it belongs to us and we're logged
+      self.canEditQleek = self.objectIsMine;
 
       return _.pick(self, [
         "apiGet", "apiPost", "apiPut", "apiDelete",
@@ -417,7 +420,7 @@
         // utils
         "hasAccountForService", "updateCoverThumbnail", "isCustomCover", "getObjectId",
         "documentsAreEqual", "isQleekNew", "isDummyDocument",
-        "isQleekContentEditable", "canEditQleek", "canEditQleekContent"
+        "isQleekContentEditable", "canEditQleek", "canEditQleekContent", "objectIsMine",
         ]);
 
       }
