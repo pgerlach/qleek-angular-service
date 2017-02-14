@@ -87,9 +87,12 @@
       };
 
       self.removeToken = function () {
+        var wasLoggedIn = !!self.cachedUser;
         localStorage.removeItem("token");
         self.cachedUser = null;
-        $rootScope.$emit('qleekApi:loggedOut');
+        if (wasLoggedIn) {
+          $rootScope.$emit('qleekApi:loggedOut');
+        }
       };
 
       self.getUserInfo = function (userId) {
