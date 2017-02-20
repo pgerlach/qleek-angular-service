@@ -36,6 +36,10 @@
 
       // internal functions
       self.api = function (method, endpoint, data, options) {
+        if (!self.API_BASE_URL) {
+          return $q.reject("setURL had not been called");
+        }
+
         if (!options) {
           options = {};
         }
@@ -141,9 +145,6 @@
       };
 
       self.getTemporarySession = function() {
-        if(self.API_BASE_URL == 'undefined/api/v1/') {
-          return $q.reject('config not loaded');
-        }
         return self.apiPost("session/temporarySession")
         .then(function success(response) {
           self.setToken(response.token);
