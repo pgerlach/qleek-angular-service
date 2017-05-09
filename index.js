@@ -402,6 +402,7 @@
       self.canEditQleek = self.objectIsMine;
 
       return _.pick(self, [
+        "getToken",
         "apiGet", "apiPost", "apiPut", "apiDelete",
         "login", "logout", "isLoggedIn",
         "getUserInfo", "updateUserInfo",
