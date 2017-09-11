@@ -300,6 +300,7 @@
       // updates a Qleek's content. It's more complicated that just updating
       // the content, because it depends if the content belongs to the user
       // or not.
+      // returns a Promise that resolves to the qleek with the content populated
       self.updateQleekContent = function(qleek, newContentData) {
         return self.getQleek(self.getObjectId(qleek), ["content"])
         .then(function(response) {
@@ -309,17 +310,25 @@
           };
           // update content. Two possibilities : content is ours, or not. If not : create a new one.
           if (self.objectIsMine(qleek.content)) {
-            return self.updateContent(qleek.content._id, newContentData);
+            return self.updateContent(qleek.content._id, newContentData)
+            .then(function(content) {
+              qleek.content = content;
+              return $q.resolve(qleek);
+            })
           } else {
             return self.createContent(newContentData)
             .then(function success(content) {
               // now update the qleek w/ the new content
-              return self.updateQleek(qleek._id, {content: content._id});
+              return self.updateQleek(qleek._id, {content: content._id})
+              .then(function(qleek) {
+                qleek.content = content;
+                return $q.resolve(qleek);
+              })
             });
           }
         })
         .catch(function(reason) {
-          self.errorMessage = reason.data.message;
+          return $q.reject(reason);
         });
       };
 
