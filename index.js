@@ -138,7 +138,11 @@
       self.updateUserInfo = function(data) {
         var token = self.getToken();
         if (token) {
-          return self.apiPut("user/me", data);
+          return self.apiPut("user/me", data)
+            .then(function(user) {
+              self.cachedUser = user;
+              return self.getUserInfo();
+            })
         } else {
           return $q.reject("no user to update");
         }
