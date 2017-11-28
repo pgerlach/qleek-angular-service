@@ -413,11 +413,14 @@
       // can only edit a qleek if it belongs to us and we're logged
       self.canEditQleek = self.objectIsMine;
 
+      self.getCachedUser = function() { return self.cachedUser; }
+
       return _.pick(self, [
         "getToken", "setToken",
         "apiGet", "apiPost", "apiPut", "apiDelete",
         "login", "logout", "isLoggedIn",
         "getUserInfo", "updateUserInfo",
+        "getCachedUser",
         "getUserLibrary", "getUserDevices",
         "getDeviceAssociationToken",
         "getQleek", "updateQleek",
