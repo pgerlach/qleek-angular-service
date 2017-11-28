@@ -305,9 +305,12 @@
         return self.getQleek(self.getObjectId(qleek), ["content"])
         .then(function(response) {
           qleek = response;
-          if (!self.canEditQleekContent(qleek)) {
-            return $q.reject("Can't modify this Qleek's content");
-          };
+
+          // TODO : Find better fix / This is temporary to make it work with recent changes in owned/managed qleeks
+          // if (!self.canEditQleekContent(qleek)) {
+          //   return $q.reject("Can't modify this Qleek's content");
+          // };
+
           // update content. Two possibilities : content is ours, or not. If not : create a new one.
           if (self.objectIsMine(qleek.content)) {
             return self.updateContent(qleek.content._id, newContentData)
