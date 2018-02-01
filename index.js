@@ -157,7 +157,11 @@
       };
 
       self.login = function (email, password, mergeCarts) {
-        var params = {email: email, password: password};
+        var params = {
+          loginMethod: "emailPassword",
+          email: email,
+          password: password
+        };
         if (mergeCarts) {
           params.mergeCarts = mergeCarts;
         }
@@ -173,6 +177,31 @@
           }
           );
       };
+
+      self.loginEmailPassword = self.login;
+
+      self.loginSignupFacebook = function(facebookUserId, facebookToken, opts) {
+        if (!opts) { opts = {}};
+        var params = {
+          loginMethod: "facebook",
+          facebookUserId: facebookUserId,
+          facebookToken: facebookToken
+        };
+        if (opts.mergeCarts) {
+          params.mergeCarts = opts.mergeCarts;
+        }
+        return self.apiPost("login", params)
+        .then(
+          function success(data) {
+            self.setToken(data.token);
+            return self.getUserInfo();
+          },
+          function failure(reason) {
+            self.removeToken();
+            return $q.reject(reason.data.message);
+          }
+        );
+      },
 
       self.logout = function () {
         return self.apiPost("logout")
@@ -421,7 +450,7 @@
       return _.pick(self, [
         "getToken", "setToken",
         "apiGet", "apiPost", "apiPut", "apiDelete",
-        "login", "logout", "isLoggedIn",
+        "login", "loginEmailPassword", "loginSignupFacebook", "logout", "isLoggedIn",
         "getUserInfo", "updateUserInfo",
         "getCachedUser",
         "getUserLibrary", "getUserDevices",
