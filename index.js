@@ -31,6 +31,25 @@
       self.config[key] = value;
     };
 
+
+    ////  network errors
+    _networkErrorCallback = null;
+    var NETWORK_ERROR_MESSAGE = "network error";
+
+    function _notifyNetworkError() {
+      if (!!_networkErrorCallback) {
+        _networkErrorCallback();
+      }
+    }
+
+    function (reason) = {
+      return reason && (reason.status < 0) || (reason === NETWORK_ERROR_MESSAGE);
+    }
+
+    self.setNetworkErrorCallback(f) {
+      _networkErrorCallback = f;
+    }
+
     // actual provider interface
     self.$get = function qleekApiFactory($q, $http, $rootScope) {
 
@@ -62,7 +81,14 @@
         })
         .then(function success(response) {
           return response.data;
-        });
+        })
+        .catch(function httpError(reason) {
+          if (reason.status < 0) {
+            reason = NETWORK_ERROR_MESSAGE;
+            _notifyNetworkError();
+          }
+          return $q.reject(reason);
+        })
       };
 
       self.apiGet = function (endpoint, options) {
@@ -119,9 +145,13 @@
             return $q.resolve(user);
           })
           .catch(function failure(reason) {
-            // token was expired. Return a temporary one ?
-            self.removeToken();
-            return self.getUserInfo();
+            if (reason !== "network error") {
+              // token was expired. Return a temporary one ?
+              self.removeToken();
+              return self.getUserInfo();
+            } else {
+              return $q.reject(reason);
+            }
           });
         } else {
           if (self.config.autoCreateTemporaryUser && userId === "me") {
