@@ -209,13 +209,14 @@
       },
 
       self.logout = function () {
-        return self.apiPost("logout")
-        .then(function success(data) {
-          return $q.resolve();
-        })
-        .catch(function(reason) {
+        var p;
+        if (self.getToken()) {
+          p = self.apiPost("logout").catch(function(reason) {
             // token will be removed anyway, no need to tell the user
-          })
+          });
+        } else {
+          p = $q.resolve();
+        }
         return p
         .finally(function() {
           self.removeToken();
