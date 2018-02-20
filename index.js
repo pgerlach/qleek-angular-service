@@ -119,9 +119,14 @@
             return $q.resolve(user);
           })
           .catch(function failure(reason) {
-            // token was expired. Return a temporary one ?
-            self.removeToken();
-            return self.getUserInfo();
+            if((reason.status >= 200)&&(reason.status < 500))
+            {
+              // token was expired. Return a temporary one ?
+              self.removeToken();
+              return self.getUserInfo();
+            } else {
+              return $q.reject("Network or server error")
+            } 
           });
         } else {
           if (self.config.autoCreateTemporaryUser && userId === "me") {
@@ -211,6 +216,7 @@
         .catch(function(reason) {
             // token will be removed anyway, no need to tell the user
           })
+        return p
         .finally(function() {
           self.removeToken();
         });
