@@ -336,38 +336,33 @@
 
       /////// METHODS WITH SOME LOGIC IN THEM ///////
 
-      // updates a Qleek's content. It's more complicated that just updating
-      // the content, because it depends if the content belongs to the user
-      // or not.
+      // updates a Qleek's content.
       // returns a Promise that resolves to the qleek with the content populated
       self.updateQleekContent = function(qleek, newContentData) {
-        return self.getQleek(self.getObjectId(qleek), ["content"])
-        .then(function(response) {
-          qleek = response;
-
-          // TODO : Find better fix / This is temporary to make it work with recent changes in owned/managed qleeks
-          // if (!self.canEditQleekContent(qleek)) {
-          //   return $q.reject("Can't modify this Qleek's content");
-          // };
-
-          // update content. Two possibilities : content is ours, or not. If not : create a new one.
-          if (self.objectIsMine(qleek.content)) {
-            return self.updateContent(qleek.content._id, newContentData)
-            .then(function(content) {
-              qleek.content = content;
-              return $q.resolve(qleek);
-            })
+        return $q.resolve()
+        .then(function() {
+          // qleek may be an objectid or the actual qleek object
+          if (qleek.hasOwnProperty("manager")) {
+            return qleek;
           } else {
-            return self.createContent(newContentData)
-            .then(function success(content) {
-              // now update the qleek w/ the new content
-              return self.updateQleek(qleek._id, {content: content._id})
-              .then(function(qleek) {
-                qleek.content = content;
-                return $q.resolve(qleek);
-              })
-            });
+            return self.getQleek(self.getObjectId(qleek));
           }
+        })
+        .then(function(res) {
+          qleek = res;
+          if (!self.documentsAreEqual(self.getCachedUser(), qleek.manager))
+          {
+            return $q.reject("only the manaegr can update the content of a Qleek");
+          }
+          return self.createContent(newContentData);
+        })
+        .then(function success(content) {
+          // now update the qleek w/ the new content
+          return self.updateQleek(qleek, {content: self.getObjectId(content)})
+          .then(function(qleek) {
+            qleek.content = content;
+            return $q.resolve(qleek);
+          })
         })
         .catch(function(reason) {
           return $q.reject(reason);
