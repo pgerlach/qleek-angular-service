@@ -32,7 +32,7 @@
     };
 
     // actual provider interface
-    self.$get = function qleekApiFactory($q, $http, $rootScope) {
+    self.$get = ['$q', '$http', '$rootScope', function qleekApiFactory($q, $http, $rootScope) {
 
       // internal functions
       self.api = function (method, endpoint, data, options) {
@@ -477,6 +477,6 @@
         "isQleekContentEditable", "canEditQleek", "canEditQleekContent", "objectIsMine",
         ]);
 
-      }
+      }]
     });
 } (window, angular));
