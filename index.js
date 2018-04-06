@@ -49,6 +49,10 @@
           headers.Authorization = self.getToken();
         }
 
+        if (self.config.customUserAgent) {
+          headers['qleek-user-agent'] = self.config.customUserAgent;
+        }
+
         if (options.params && options.params.__populate && Array.isArray(options.params.__populate)) {
           options.params.__populate = options.params.__populate.join(",");
         }
